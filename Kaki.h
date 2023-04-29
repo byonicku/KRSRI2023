@@ -24,7 +24,7 @@ class Kaki{
       this->grup = grup;
       this->letak = letak;
       
-      this->standPoint = {0,-41,31}; // Default {0,-41,31};
+      this->standPoint = {0,-40,30}; // Default {0,-40,30};
       
       // if(letak == DEPAN)
       //   this->standPoint = rotateMatrix(this->standPoint, 15 * KIRI * this->pos);

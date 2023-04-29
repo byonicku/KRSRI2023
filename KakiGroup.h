@@ -22,7 +22,7 @@ class KakiGroup{
       RB = Kaki(16,17,18, KANAN, GRUP1, DEPAN);
       // Constructor utama untuk kaki, gunakan grouping yang tepat.
 
-      this->standPoint = {0,-41,31}; // Titik berdiri utama default : {0, -40, -30};
+      this->standPoint = {0,-40,30}; // Titik berdiri utama default : {0, -40, -30};
     }
     
     void init(){
@@ -102,7 +102,7 @@ class KakiGroup{
     // UNTESTED
     void putar(float deg,int dir){
       vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
-      
+
       vec3_t P1 = rotateMatrix(this->standPoint, deg * dir);
       vec3_t P4 = rotateMatrix(this->standPoint, deg *-1 * dir); 
       vec3_t naik = tinggi + this->standPoint;
