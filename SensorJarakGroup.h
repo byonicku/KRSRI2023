@@ -16,4 +16,20 @@ class SensorJarakGroup{
             kiri = SensorJarak(8,9);
             kanan  = SensorJarak(11,10);
         }
+
+        int jarakKiri(){
+          return kiri.bacaJarak();
+        }
+        
+        int jarakKanan(){
+          return kanan.bacaJarak();
+        }
+
+        int jarakDepan(){
+          return depan.bacaJarak();
+        }
+
+        int jarakBelakang(){
+          return depan.bacaJarak();
+        }
 };

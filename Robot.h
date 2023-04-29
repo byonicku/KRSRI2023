@@ -40,13 +40,17 @@ class Robot{
     }
 
     void maju(){
+        int lastSensor = jarak.jarakKanan();
+        int nowSensor = jarak.jarakKanan();
+        
+        if(lastSensor - nowSensor <= 25 && nowSensor > 50){
+            kaki.putar(16, KIRI);
+        }
+
         for(int i = 0 ; i < 3 ; i++){
           kaki.jalan(MAJU);
           delay(100);
         }
-
-        delay(100);
-        kaki.berdiri();
     }
 
     void mundur(){
@@ -54,9 +58,6 @@ class Robot{
           kaki.jalan(MUNDUR);
           delay(100);
         }
-
-        delay(100);
-        kaki.berdiri();
     }
 
     void putarKiri(){

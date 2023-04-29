@@ -23,7 +23,7 @@ class SensorJarak{
             digitalWrite(trigPin, HIGH);
             delayMicroseconds(10);
             digitalWrite(trigPin, LOW);
-            int jarak = pulseIn(echoPin, HIGH) * 0.034 / 2;
+            int jarak = pulseIn(echoPin, HIGH) * 0.034 / 2 * 10;
             // Rumus membaca jarak
 
             return jarak;

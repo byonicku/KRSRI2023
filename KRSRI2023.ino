@@ -161,8 +161,10 @@
 // TEST KESELURUHAN
 #include "header.h"
 #include "Robot.h"
+// #include "SensorJarakGroup.h"
 
 Robot KSR2023;
+// SensorJarakGroup g = SensorJarakGroup();
 
 void setup(){
     ax12a.begin(BaudRate, DirectionPin, &Serial3); // inisialisasi AX12A
@@ -171,8 +173,12 @@ void setup(){
     
     KSR2023.init();
     delay(1000);
+
+    for(int i = 0 ; i < 15 ; i++){
+      KSR2023.maju();
+    }
 }
 
 void loop(){
-
+  // Serial.println(g.jarakKanan());
 }
