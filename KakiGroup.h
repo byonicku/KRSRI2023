@@ -63,6 +63,21 @@ class KakiGroup{
       // Queue berjalan untuk kaki
     }
 
+    void langkahPutar(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
+      do{
+        vec3_t tempMaju = stepsMaju.dequeue();
+        vec3_t tempMundur = stepsMundur.dequeue();
+            
+        LF.langkahPutar(tempMaju,tempMundur);
+        RF.langkahPutar(tempMaju,tempMundur);
+        RM.langkahPutar(tempMaju,tempMundur);
+        LM.langkahPutar(tempMaju,tempMundur);
+        LB.langkahPutar(tempMaju,tempMundur);
+        RB.langkahPutar(tempMaju,tempMundur);
+      }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
+      // Queue berjalan untuk kaki
+    }
+
     void jalan(int dir){
       vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
 

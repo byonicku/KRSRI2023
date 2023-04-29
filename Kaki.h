@@ -57,6 +57,27 @@ class Kaki{
         delay(10);
     }
 
+    void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){
+        if(this->letak == DEPAN){
+          pointMaju = rotateMatrix(pointMaju, 15);
+          pointMundur = rotateMatrix(pointMundur, 15);
+        }
+        else if(this->letak == BELAKANG){
+          pointMaju = rotateMatrix(pointMaju, -15);
+          pointMundur = rotateMatrix(pointMundur, -15);
+        } 
+
+        // Udah di test dan hasil lebih baik tanpa rotasi
+        moveToPoint(pointMundur);
+        if(this->grup == GRUP1){
+          moveToPoint(pointMaju);
+        }
+        else{
+          moveToPoint(pointMundur);
+        }
+        delay(10);
+    }
+
     // UNTESTED
     void langkahSpread(vec3_t pointMaju, vec3_t pointMundur){
         if(this->grup == GRUP1){
