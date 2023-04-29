@@ -94,28 +94,6 @@ class KakiGroup{
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
 
-    // UNTESTED
-    void jalanSamping(int dir){
-        vec3_t tinggi = {0,1,0}; // Mengatur ketinggian dari langkah
-
-        vec3_t P1 = {0,0,1};
-        vec3_t P4 = {0,0,-1};
-        
-        // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
-
-        P1 = standPoint + P1 * dir;
-        P4 = standPoint + P4 * dir;
-
-        vec3_t P2 = tinggi + P1;
-        vec3_t P3 = tinggi + P4;
-        
-        langkah(trajectory(P1,P2,P3,P4,t), trajectory(P4,P4,P1,P1,t));
-        langkah(trajectory(P4,P4,P1,P1,t), trajectory(P1,P2,P3,P4,t));
-
-        // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
-    }
-
-    // UNTESTED
     void putar(float deg,int dir){
       vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
 
