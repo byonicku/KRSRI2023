@@ -1,8 +1,3 @@
-// Harus ada library MPU6050.h, Wire.h, I2Cdev.h
-#include <MPU6050.h>
-#include <Wire.h>
-#include <I2Cdev.h>
-
 class Kompas{
     private:
         MPU6050 compass;

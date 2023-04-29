@@ -1,6 +1,6 @@
 #include "Kaki.h"
 
-float t = 0.3; // Mengatur banyak langkah dari kaki
+static float t = 0.3; // Mengatur banyak langkah dari kaki
 
 class KakiGroup{
   private:
@@ -22,7 +22,7 @@ class KakiGroup{
       RB = Kaki(16,17,18, KANAN, GRUP1, DEPAN);
       // Constructor utama untuk kaki, gunakan grouping yang tepat.
 
-      this->standPoint = {0,-40,30}; // Titik berdiri utama
+      this->standPoint = {0,-41,31}; // Titik berdiri utama default : {0, -40, -30};
     }
     
     void init(){
@@ -53,10 +53,10 @@ class KakiGroup{
         vec3_t tempMundur = stepsMundur.dequeue();
             
         LF.langkah(tempMaju,tempMundur);
-        RM.langkah(tempMaju,tempMundur);
-        LB.langkah(tempMaju,tempMundur);
         RF.langkah(tempMaju,tempMundur);
+        RM.langkah(tempMaju,tempMundur);
         LM.langkah(tempMaju,tempMundur);
+        LB.langkah(tempMaju,tempMundur);
         RB.langkah(tempMaju,tempMundur);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
 
@@ -66,19 +66,14 @@ class KakiGroup{
     void jalan(int dir){
       vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
 
-      vec3_t P1 = {-5,0,0}; //-5 aga ok // before -10
-      vec3_t P4 = {5,0,0}; //5 aga ok // before 10
+      vec3_t P1 = rotateMatrix(this->standPoint, 15 * dir);
+      vec3_t P4 = rotateMatrix(this->standPoint, -15 * dir); 
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
+      vec3_t naik = tinggi + this->standPoint;
 
-      P1 = standPoint + P1 * dir;
-      P4 = standPoint + P4 * dir;
-  
-      vec3_t P2 = tinggi + P1;
-      vec3_t P3 = tinggi + P4;
-
-      langkah(trajectory(P1,P2,P3,P4,t), trajectory(P4,P4,P1,P1,t));
-      langkah(trajectory(P4,P4,P1,P1,t), trajectory(P1,P2,P3,P4,t));
+      langkah(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
+      langkah(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
 
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
@@ -106,13 +101,13 @@ class KakiGroup{
 
     // UNTESTED
     void putar(float deg,int dir){
-      vec3_t target = standPoint;
-      vec3_t P1 = rotateMatrix(target, deg * dir);
-      vec3_t P4 = rotateMatrix(target, deg *-1 * dir);
-      vec3_t tinggi = {0,3,0};
-      vec3_t titikBantu = {0,3,target.z-target.z};
-
-      langkah(trajectory(P1,P1 + titikBantu + tinggi,P4 + titikBantu + tinggi,P4,t), trajectory(P4,P4 + titikBantu,P1 + titikBantu,P1,t));
-      langkah(trajectory(P4,P4 + titikBantu,P1 + titikBantu,P1,t), trajectory(P1,P1 + titikBantu + tinggi,P4 + titikBantu + tinggi,P4,t));
+      vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
+      
+      vec3_t P1 = rotateMatrix(this->standPoint, deg * dir);
+      vec3_t P4 = rotateMatrix(this->standPoint, deg *-1 * dir); 
+      vec3_t naik = tinggi + this->standPoint;
+      
+      langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
+      langkahPutar(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
     }
 };

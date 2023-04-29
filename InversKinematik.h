@@ -58,3 +58,13 @@ ArduinoQueue<vec3_t> trajectory(vec3_t P1,vec3_t P2,vec3_t P3,vec3_t P4, float t
     
     return result;
 }
+
+ArduinoQueue<vec3_t> bukanTrajectory(vec3_t P1,vec3_t P2,vec3_t P3){
+    ArduinoQueue<vec3_t> result(3);
+    
+    result.enqueue(P1);
+    result.enqueue(P2);
+    result.enqueue(P3);
+
+    return result;
+}

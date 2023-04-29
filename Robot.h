@@ -26,11 +26,13 @@ class Robot{
         kompas.init();
 
         sweeper.init();
-        delay(500);
+        delay(1000);
+
         capit.init();
-        delay(500);
+        delay(1000);
+        
         kaki.berdiri();
-        delay(500);
+        delay(1000);
     }
 
     void berdiri(){
@@ -39,15 +41,15 @@ class Robot{
 
     void maju(){
         for(int i = 0 ; i < 10 ; i++){
-          coba.jalan(MAJU);
-          delay(80);
+          kaki.jalan(MAJU);
+          delay(20);
         }
     }
 
     void mundur(){
         for(int i = 0 ; i < 10 ; i++){
-          coba.jalan(MUNDUR);
-          delay(80);
+          kaki.jalan(MUNDUR);
+          delay(20);
         }
     }
 
@@ -72,10 +74,10 @@ class Robot{
         capit.bukaCapit();
         delay(1000);
 
-        capit.tutupCapit();
-        delay(1000);
-
         capit.naikLengan();
         delay(1000);
+        
+        capit.tutupCapit();
+        delay(1000);        
     }
 };

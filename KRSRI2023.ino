@@ -1,24 +1,42 @@
 // #include "header.h"
+// #include "Kaki.h"
 // #include "Robot.h"
-// // #include "Kompas.h"
+// #include "Kompas.h"
 // #include "KakiGroup.h"
 // // #include "SensorJarakGroup.h"
 // #include "Capit.h"
 // #include "Sweeper.h"
-// // #include "Kamera.h"
+// #include "Kamera.h"
 
-// // Kamera kam;
+// Kaki kaki = Kaki(13,14,15, KANAN, GRUP2, TENGAH);
+
+// Kamera kam;
 // // SensorJarakGroup coba;
 // Capit capit;
 // KakiGroup coba;
 // Sweeper sweep;
-// // Kompas pas;
+// Kompas pas;
 
 // void setup(){
+//   Serial.begin(9600);
+//   pas.init();
+// }
+
+// void loop(){
+//   Serial.print(pas.getCurrent().x);
+//   Serial.print(", ");
+//   Serial.print(pas.getCurrent().y);
+//   Serial.print(", ");
+//   Serial.println(pas.getCurrent().z);
+//   delay(1000);
+// }
+
 //     ax12a.begin(BaudRate, DirectionPin, &Serial3);
+    
 //     Serial3.begin(1000000);
 //     Serial.begin(9600);
-
+//     kaki.berdiri();
+// }
 //     // kam.init();
 //     // delay(50);
 //     coba = KakiGroup();
@@ -34,7 +52,7 @@
 //     // sweep.sweepTurun();
 //     // delay(2000);
 //     // sweep.sweepNaik();
-
+// void loop(){}
 //     // coba = SensorJarakGroup();
 //     // Serial.println("Init");
 //     // coba.init();
@@ -153,8 +171,20 @@ void setup(){
     
     KSR2023.init();
     delay(1000);
+
     KSR2023.berdiri();
-    delay(500);
+    delay(1000);
+
+    KSR2023.maju();
+    delay(1000);
+
+    // KSR2023.ambil();
+    // delay(1000);
+
+    KSR2023.mundur();
+    delay(1000);
+
+    // KSR2023.taruh();
 }
 
 void loop(){
