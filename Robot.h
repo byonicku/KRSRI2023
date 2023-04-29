@@ -40,14 +40,14 @@ class Robot{
     }
 
     void maju(){
-        for(int i = 0 ; i < 10 ; i++){
+        for(int i = 0 ; i < 3 ; i++){
           kaki.jalan(MAJU);
           delay(20);
         }
     }
 
     void mundur(){
-        for(int i = 0 ; i < 10 ; i++){
+        for(int i = 0 ; i < 3 ; i++){
           kaki.jalan(MUNDUR);
           delay(20);
         }
