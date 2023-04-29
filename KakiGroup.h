@@ -14,12 +14,13 @@ class KakiGroup{
 
   public:
     KakiGroup(){
-      LF = Kaki(1,2,3, KIRI, GRUP2, DEPAN);
-      LM = Kaki(4,5,6, KIRI, GRUP1, TENGAH);
-      LB = Kaki(7,8,9, KIRI, GRUP2, BELAKANG);
-      RF = Kaki(10,11,12, KANAN, GRUP1, BELAKANG);
-      RM = Kaki(13,14,15, KANAN, GRUP2, TENGAH);
-      RB = Kaki(16,17,18, KANAN, GRUP1, DEPAN);
+      LF = Kaki(1,2,3, KIRI, GRUP2, DEPAN); // Aslinya depan kanan RF
+      LM = Kaki(4,5,6, KIRI, GRUP1, TENGAH); // Aslinya tengah kanan RM
+      LB = Kaki(7,8,9, KIRI, GRUP2, BELAKANG); // Asllinya belakang kanan RB
+      RF = Kaki(10,11,12, KANAN, GRUP1, BELAKANG); // Aslinya belakang kiri LB
+      RM = Kaki(13,14,15, KANAN, GRUP2, TENGAH); // Aslinya tengah kiri LM 
+      RB = Kaki(16,17,18, KANAN, GRUP1, DEPAN); // Aslinya depan kiri LF
+      
       // Constructor utama untuk kaki, gunakan grouping yang tepat.
 
       this->standPoint = {0,-40,30}; // Titik berdiri utama default : {0, -40, -30};
@@ -27,10 +28,10 @@ class KakiGroup{
     
     void init(){
       LF.init();
-      LM.init();
-      LB.init();
       RF.init();
+      LM.init();
       RM.init();
+      LB.init();
       RB.init();
 
       // Set kaki ke poin 0 semua (robot akan jatuh bila tidak menumpu pada sesuatu, hati")
@@ -38,10 +39,10 @@ class KakiGroup{
     
     void berdiri(){
       LF.berdiri();
-      LM.berdiri();
-      LB.berdiri();
       RF.berdiri();
+      LM.berdiri();
       RM.berdiri();
+      LB.berdiri();
       RB.berdiri();
 
       // Set kaki ke poin berdiri (standpoint)
@@ -54,8 +55,8 @@ class KakiGroup{
             
         LF.langkah(tempMaju,tempMundur);
         RF.langkah(tempMaju,tempMundur);
-        RM.langkah(tempMaju,tempMundur);
         LM.langkah(tempMaju,tempMundur);
+        RM.langkah(tempMaju,tempMundur);
         LB.langkah(tempMaju,tempMundur);
         RB.langkah(tempMaju,tempMundur);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
@@ -70,8 +71,8 @@ class KakiGroup{
             
         LF.langkahPutar(tempMaju,tempMundur);
         RF.langkahPutar(tempMaju,tempMundur);
-        RM.langkahPutar(tempMaju,tempMundur);
         LM.langkahPutar(tempMaju,tempMundur);
+        RM.langkahPutar(tempMaju,tempMundur);
         LB.langkahPutar(tempMaju,tempMundur);
         RB.langkahPutar(tempMaju,tempMundur);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
@@ -119,7 +120,8 @@ class KakiGroup{
       vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
 
       vec3_t P1 = rotateMatrix(this->standPoint, deg * dir);
-      vec3_t P4 = rotateMatrix(this->standPoint, deg *-1 * dir); 
+      vec3_t P4 = rotateMatrix(this->standPoint, deg *-1 * dir);
+
       vec3_t naik = tinggi + this->standPoint;
       
       langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));

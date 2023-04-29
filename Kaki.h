@@ -7,7 +7,6 @@ class Kaki{
     int grup; // GRUP 1 / 2
     int letak; // DEPAN / TENGAH / BELAKANG
     vec3_t standPoint; // Titik berdiri semut
-    vec3_t standPointSpread; // Titik berdiri laba laba
 
   public:    
     Kaki(){
@@ -59,16 +58,15 @@ class Kaki{
 
     void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){
         if(this->letak == DEPAN){
-          pointMaju = rotateMatrix(pointMaju, 15);
-          pointMundur = rotateMatrix(pointMundur, 15);
+          pointMaju = rotateMatrix(pointMaju, 15 * this->pos);
+          pointMundur = rotateMatrix(pointMundur, 15 * this->pos);
         }
         else if(this->letak == BELAKANG){
-          pointMaju = rotateMatrix(pointMaju, -15);
-          pointMundur = rotateMatrix(pointMundur, -15);
+          pointMaju = rotateMatrix(pointMaju, -15 * this->pos );
+          pointMundur = rotateMatrix(pointMundur, -15 * this->pos);
         } 
 
         // Udah di test dan hasil lebih baik tanpa rotasi
-        moveToPoint(pointMundur);
         if(this->grup == GRUP1){
           moveToPoint(pointMaju);
         }
@@ -76,19 +74,6 @@ class Kaki{
           moveToPoint(pointMundur);
         }
         delay(10);
-    }
-
-    // UNTESTED
-    void langkahSpread(vec3_t pointMaju, vec3_t pointMundur){
-        if(this->grup == GRUP1){
-          pointMaju.x *= this->pos;
-          moveToPoint(pointMaju);
-        }
-        else{
-          pointMundur.x *= this->pos;
-          moveToPoint(pointMundur);
-        }
-        delay(20);
     }
 
     void moveToPoint(vec3_t target){
@@ -125,9 +110,4 @@ class Kaki{
         moveToPoint(standPoint);
     }
 
-    // UNTESTED
-    void berdiriSpread(){
-        // Mini function untuk berdiri spread
-        moveToPoint(standPointSpread);
-    }
 };

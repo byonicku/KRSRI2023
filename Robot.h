@@ -42,16 +42,42 @@ class Robot{
     void maju(){
         for(int i = 0 ; i < 3 ; i++){
           kaki.jalan(MAJU);
-          delay(20);
+          delay(100);
         }
+
+        delay(100);
+        kaki.berdiri();
     }
 
     void mundur(){
         for(int i = 0 ; i < 3 ; i++){
           kaki.jalan(MUNDUR);
-          delay(20);
+          delay(100);
         }
+
+        delay(100);
+        kaki.berdiri();
     }
+
+    void putarKiri(){
+      for(int i = 0 ; i < 4 ; i++){
+          kaki.putar(16, KIRI);
+          delay(100);
+        }
+
+        delay(100);
+        kaki.berdiri();
+    }
+
+    void putarKanan(){
+      for(int i = 0 ; i < 5 ; i++){
+          kaki.putar(17, KANAN);
+          delay(100);
+        }
+
+        delay(100);
+        kaki.berdiri();
+    }   
 
     void ambil(){
         capit.turunLengan();

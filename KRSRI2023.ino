@@ -171,20 +171,6 @@ void setup(){
     
     KSR2023.init();
     delay(1000);
-
-    KSR2023.berdiri();
-    delay(1000);
-
-    KSR2023.maju();
-    delay(1000);
-
-    // KSR2023.ambil();
-    // delay(1000);
-
-    KSR2023.mundur();
-    delay(1000);
-
-    // KSR2023.taruh();
 }
 
 void loop(){
