@@ -20,14 +20,11 @@
 // void setup(){
 //   Serial.begin(9600);
 //   pas.init();
+//   pas.testConnection();
 // }
 
 // void loop(){
-//   Serial.print(pas.getCurrent().x);
-//   Serial.print(", ");
-//   Serial.print(pas.getCurrent().y);
-//   Serial.print(", ");
-//   Serial.println(pas.getCurrent().z);
+//   pas.getCurrent();
 //   delay(1000);
 // }
 
@@ -170,15 +167,27 @@ void setup(){
     ax12a.begin(BaudRate, DirectionPin, &Serial3); // inisialisasi AX12A
     Serial3.begin(1000000);
     Serial.begin(9600);
-    
-    KSR2023.init();
-    delay(1000);
+    KSR2023.kamera.init();
+    // KSR2023.mundur();
+    // KSR2023.init();
+    // delay(1000);
+    // KSR2023.capit.turunLengan();
+    // KSR2023.capit.bukaCapit();
+    // delay(1500);
+    // KSR2023.capit.tutupCapit();
+    // delay(1000);
+    // KSR2023.capit.bukaCapit();
+    // KSR2023.maju();
 
-    for(int i = 0 ; i < 15 ; i++){
-      KSR2023.maju();
-    }
+    // KSR2023.kameraPrintXY();
+
+    // KSR2023.mundur();
+
+    // KSR2023.kameraPrintXY();
+    
 }
 
 void loop(){
-  // Serial.println(g.jarakKanan());
+  KSR2023.kameraPrintXY();
+  delay(500);
 }

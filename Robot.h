@@ -43,9 +43,9 @@ class Robot{
         int lastSensor = jarak.jarakKanan();
         int nowSensor = jarak.jarakKanan();
         
-        if(lastSensor - nowSensor <= 25 && nowSensor > 50){
-            kaki.putar(16, KIRI);
-        }
+        // if(lastSensor - nowSensor <= 25 && nowSensor > 50){
+        //     kaki.putar(16, KIRI);
+        // }
 
         for(int i = 0 ; i < 3 ; i++){
           kaki.jalan(MAJU);
@@ -106,5 +106,11 @@ class Robot{
         
         capit.tutupCapit();
         delay(1000);        
+    }
+
+    void kameraPrintXY(){
+        Serial.print(kamera.getX());
+        Serial.print(", ");
+        Serial.println(kamera.getY());
     }
 };

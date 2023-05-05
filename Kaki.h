@@ -88,12 +88,12 @@ class Kaki{
         ax12a.move(thibiaID,mapServo(deggs.z * this->pos));
         delay(10);
 
-        Serial.println(deggs.x);
-        Serial.println(mapServo(deggs.x));
-        Serial.println(deggs.y);
-        Serial.println(mapServo(deggs.y));
-        Serial.println(deggs.z);
-        Serial.println(mapServo(deggs.z));
+        // Serial.println(deggs.x);
+        // Serial.println(mapServo(deggs.x));
+        // Serial.println(deggs.y);
+        // Serial.println(mapServo(deggs.y));
+        // Serial.println(deggs.z);
+        // Serial.println(mapServo(deggs.z));
 
         // Uncomment untuk liat X, Y, Z dari servo
     }
