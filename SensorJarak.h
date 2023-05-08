@@ -1,3 +1,5 @@
+#define SIZE 4
+
 class SensorJarak{
   private:
         int echoPin;
@@ -34,4 +36,23 @@ class SensorJarak{
             delayMicroseconds(2);
             // Reset trigger untuk menghindari error
         }
+
+        int filter() {
+            int sum = 0;
+            float weightSum = 0;
+            int readings[SIZE];
+            float weights[SIZE] = {0.4, 0.3, 0.2, 0.1};
+
+            // Read sensor values and compute weighted sum
+            for (int i = 0; i < SIZE; i++) {
+              readings[i] = bacaJarak();
+              sum += readings[i] * weights[i];
+              weightSum += weights[i];
+            }
+
+            // Compute weighted average
+            int avg = round(sum / weightSum);
+
+            return avg;
+          }
 };

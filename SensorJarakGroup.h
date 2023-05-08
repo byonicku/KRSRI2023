@@ -11,25 +11,25 @@ class SensorJarakGroup{
             // Constructor untuk Grouping Sensor Jarak, gunakan pin yang sama untuk trigger dan echo
             // Urutan parameter (echo, trigger)
             
-            depan = SensorJarak(7,6); 
+            depan =  SensorJarak(7,6);
             belakang = SensorJarak(13,12);
             kiri = SensorJarak(8,9);
             kanan  = SensorJarak(11,10);
         }
 
         int jarakKiri(){
-          return kiri.bacaJarak();
+          return kiri.filter();
         }
         
         int jarakKanan(){
-          return kanan.bacaJarak();
+          return kanan.filter();
         }
 
         int jarakDepan(){
-          return depan.bacaJarak();
+          return depan.filter();
         }
 
         int jarakBelakang(){
-          return depan.bacaJarak();
+          return belakang.filter();
         }
 };

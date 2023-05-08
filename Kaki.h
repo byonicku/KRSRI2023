@@ -7,6 +7,7 @@ class Kaki{
     int grup; // GRUP 1 / 2
     int letak; // DEPAN / TENGAH / BELAKANG
     vec3_t standPoint; // Titik berdiri semut
+    vec3_t standPointNendang; // Titik berdiri cuma untuk jalan nendang
 
   public:    
     Kaki(){
@@ -23,8 +24,8 @@ class Kaki{
       this->grup = grup;
       this->letak = letak;
       
-      this->standPoint = {0,-40,30}; // Default {0,-40,30};
-      
+      this->standPoint = {0,-43,33}; // Default {0,-40,30};
+      this->standPointNendang = {0, -29, 33};
       // if(letak == DEPAN)
       //   this->standPoint = rotateMatrix(this->standPoint, 15 * KIRI * this->pos);
       // else if(letak == BELAKANG)
@@ -35,12 +36,12 @@ class Kaki{
 
     void langkah(vec3_t pointMaju, vec3_t pointMundur){
         if(this->letak == DEPAN){
-          pointMaju = rotateMatrix(pointMaju, 15);
-          pointMundur = rotateMatrix(pointMundur, 15);
+          pointMaju = rotateMatrix(pointMaju, 10);
+          pointMundur = rotateMatrix(pointMundur, 10);
         }
         else if(this->letak == BELAKANG){
-          pointMaju = rotateMatrix(pointMaju, -15);
-          pointMundur = rotateMatrix(pointMundur, -15);
+          pointMaju = rotateMatrix(pointMaju, -10);
+          pointMundur = rotateMatrix(pointMundur, -10);
         } 
 
         if(this->grup == GRUP1){
@@ -56,6 +57,29 @@ class Kaki{
         delay(10);
     }
 
+    void langkahNendang(vec3_t pointMaju, vec3_t pointMundur){
+        if(this->letak == DEPAN){
+          pointMaju = rotateMatrix(pointMaju, 13);
+          pointMundur = rotateMatrix(pointMundur, 13);
+        }
+        else if(this->letak == BELAKANG){
+          pointMaju = rotateMatrix(pointMaju, -13);
+          pointMundur = rotateMatrix(pointMundur, -13);
+        } 
+
+        if(this->grup == GRUP1){
+          pointMaju.x *= this->pos;
+          // pointMaju.y *= this->pos;
+          moveToPointNendang(pointMaju);
+        }
+        else{
+          pointMundur.x *= this->pos;
+          // pointMundur.y *= this->pos;
+          moveToPointNendang(pointMundur);
+        }
+        delay(10);
+    }
+
     void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){
         if(this->letak == DEPAN){
           pointMaju = rotateMatrix(pointMaju, 15 * this->pos);
@@ -66,35 +90,67 @@ class Kaki{
           pointMundur = rotateMatrix(pointMundur, -15 * this->pos);
         } 
 
-        // Udah di test dan hasil lebih baik tanpa rotasi
         if(this->grup == GRUP1){
           moveToPoint(pointMaju);
         }
         else{
           moveToPoint(pointMundur);
         }
-        delay(10);
+
+        delay(10); // default 10
     }
 
     void moveToPoint(vec3_t target){
         vec3_t deggs = InversKinematik(target);
 
         ax12a.move(coxaID,mapServo(deggs.x));
-        delay(10);
+        // delay(10);
 
         ax12a.move(fermurID,mapServo(deggs.y * this->pos * -1));
-        delay(10);
+        // delay(10);
 
         ax12a.move(thibiaID,mapServo(deggs.z * this->pos));
-        delay(10);
-
-        // Serial.println(deggs.x);
-        // Serial.println(mapServo(deggs.x));
-        // Serial.println(deggs.y);
-        // Serial.println(mapServo(deggs.y));
+        // delay(10);
+        // Serial.println();
+        // Serial.print(deggs.x);
+        // Serial.print(" , ");
+        // Serial.print(deggs.y);
+        // Serial.print(" , ");
         // Serial.println(deggs.z);
+        // Serial.print(mapServo(deggs.x));
+        // Serial.print(" , ");
+        // Serial.print(mapServo(deggs.y));
+        // Serial.print(" , ");
         // Serial.println(mapServo(deggs.z));
+        // Serial.println();
+        
+        // Uncomment untuk liat X, Y, Z dari servo
+    }
 
+    void moveToPointNendang(vec3_t target){
+        vec3_t deggs = InversKinematikNendang(target);
+
+        ax12a.move(coxaID,mapServo(deggs.x));
+        // delay(10);
+
+        ax12a.move(fermurID,mapServo(deggs.y * this->pos * -1));
+        // delay(10);
+
+        ax12a.move(thibiaID,mapServo(deggs.z * this->pos));
+        // delay(10);
+        Serial.println();
+        Serial.print(deggs.x);
+        Serial.print(" , ");
+        Serial.print(deggs.y);
+        Serial.print(" , ");
+        Serial.println(deggs.z);
+        Serial.print(mapServo(deggs.x));
+        Serial.print(" , ");
+        Serial.print(mapServo((deggs.y) * this->pos * -1));
+        Serial.print(" , ");
+        Serial.println(mapServo((deggs.z) * this->pos));
+        Serial.println();
+        
         // Uncomment untuk liat X, Y, Z dari servo
     }
     
@@ -110,4 +166,7 @@ class Kaki{
         moveToPoint(standPoint);
     }
 
+    void berdiriNendang(){
+      moveToPointNendang(standPointNendang);
+    }
 };

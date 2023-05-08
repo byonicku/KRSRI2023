@@ -39,7 +39,7 @@ class Capit{
     }
 
     void naikLengan(){ 
-      for(int pos = 135 ; pos >= 0 ; pos -= 5){
+      for(int pos = 140 ; pos >= 0 ; pos -= 5){
           lengan.write(pos);
           delay(65);
       }
@@ -47,7 +47,7 @@ class Capit{
     }
 
     void turunLengan(){
-      for(int pos = 0 ; pos <= 135 ; pos += 5){
+      for(int pos = 0 ; pos <= 140 ; pos += 5){
           lengan.write(pos);
           delay(65);
       }
