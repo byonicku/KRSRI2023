@@ -25,7 +25,8 @@ class Kaki{
       this->letak = letak;
       
       this->standPoint = {0,-43,33}; // Default {0,-40,30};
-      this->standPointNendang = {0, -29, 33};
+      this->standPointNendang = {0, -32, 38}; // -37, 43 //-40 30
+      
       // if(letak == DEPAN)
       //   this->standPoint = rotateMatrix(this->standPoint, 15 * KIRI * this->pos);
       // else if(letak == BELAKANG)
@@ -54,17 +55,17 @@ class Kaki{
           // pointMundur.y *= this->pos;
           moveToPoint(pointMundur);
         }
-        delay(10);
+        delayMicroseconds(10);
     }
 
     void langkahNendang(vec3_t pointMaju, vec3_t pointMundur){
         if(this->letak == DEPAN){
-          pointMaju = rotateMatrix(pointMaju, 13);
-          pointMundur = rotateMatrix(pointMundur, 13);
+          pointMaju = rotateMatrix(pointMaju, 10);
+          pointMundur = rotateMatrix(pointMundur, 10);
         }
         else if(this->letak == BELAKANG){
-          pointMaju = rotateMatrix(pointMaju, -13);
-          pointMundur = rotateMatrix(pointMundur, -13);
+          pointMaju = rotateMatrix(pointMaju, -10);
+          pointMundur = rotateMatrix(pointMundur, -10);
         } 
 
         if(this->grup == GRUP1){
@@ -77,7 +78,7 @@ class Kaki{
           // pointMundur.y *= this->pos;
           moveToPointNendang(pointMundur);
         }
-        delay(10);
+        delayMicroseconds(10);
     }
 
     void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){
@@ -97,20 +98,16 @@ class Kaki{
           moveToPoint(pointMundur);
         }
 
-        delay(10); // default 10
+        delayMicroseconds(10); // default 10
     }
 
     void moveToPoint(vec3_t target){
         vec3_t deggs = InversKinematik(target);
 
-        ax12a.move(coxaID,mapServo(deggs.x));
-        // delay(10);
-
-        ax12a.move(fermurID,mapServo(deggs.y * this->pos * -1));
-        // delay(10);
-
-        ax12a.move(thibiaID,mapServo(deggs.z * this->pos));
-        // delay(10);
+        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 1023);
+        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 1023);
+        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 1023);
+        
         // Serial.println();
         // Serial.print(deggs.x);
         // Serial.print(" , ");
@@ -128,16 +125,13 @@ class Kaki{
     }
 
     void moveToPointNendang(vec3_t target){
-        vec3_t deggs = InversKinematikNendang(target);
+        // vec3_t deggs = InversKinematikNendang(target);
+        vec3_t deggs = InversKinematik(target);
 
-        ax12a.move(coxaID,mapServo(deggs.x));
-        // delay(10);
-
-        ax12a.move(fermurID,mapServo(deggs.y * this->pos * -1));
-        // delay(10);
-
-        ax12a.move(thibiaID,mapServo(deggs.z * this->pos));
-        // delay(10);
+        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 300);
+        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 300);
+        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 300);
+        
         Serial.println();
         Serial.print(deggs.x);
         Serial.print(" , ");
@@ -146,9 +140,9 @@ class Kaki{
         Serial.println(deggs.z);
         Serial.print(mapServo(deggs.x));
         Serial.print(" , ");
-        Serial.print(mapServo((deggs.y) * this->pos * -1));
+        Serial.print(mapServo(deggs.y  * this->pos * -1));
         Serial.print(" , ");
-        Serial.println(mapServo((deggs.z) * this->pos));
+        Serial.println(mapServo(deggs.z * this->pos));
         Serial.println();
         
         // Uncomment untuk liat X, Y, Z dari servo
@@ -168,5 +162,43 @@ class Kaki{
 
     void berdiriNendang(){
       moveToPointNendang(standPointNendang);
+      // ini dibawah sebelumnya untuk nyari standpoint yg pas :v
+// TEST -32
+//  i: -32 j: 38
+// 0.00 , 20.57 , 80.13
+// 512 , 512 , 512
+
+// TEST -32
+//  i: -32 j: 39
+
+// 0.00 , 21.66 , 80.58
+// 512 , 512 , 512
+
+// TEST -31
+//  i: -31 j: 38
+
+// 0.00 , 22.24 , 79.07
+// 512 , 512 , 512
+      // for(int i = -70 ; i < 70 ; i++){
+      //     for(int j = -70 ; j < 70 ; j++){
+      //         this->standPointNendang = {0, i, j};
+      //         vec3_t deggs = InversKinematik(this->standPointNendang);
+      //         if((deggs.y > 20 && deggs.y < 23) && deggs.x == 0 && (deggs.z > 79 && deggs.z < 81)){
+      //           Serial.print("TEST "); Serial.println(i); Serial.print(" i: "); Serial.print(i); Serial.print(" j: "); Serial.print(j); Serial.println();          
+      //           Serial.println();
+      //           Serial.print(deggs.x);
+      //           Serial.print(" , ");
+      //           Serial.print(deggs.y);
+      //           Serial.print(" , ");
+      //           Serial.println(deggs.z);
+      //           Serial.print(mapServo(deggs.x));
+      //           Serial.print(" , ");
+      //           Serial.print(mapServo(deggs.y * this->pos * -1));
+      //           Serial.print(" , ");
+      //           Serial.println(mapServo(deggs.z * this->pos));
+      //           Serial.println();
+      //         }
+      //     }
+      // }
     }
 };

@@ -1,9 +1,9 @@
+#include "Arduino.h"
 #include "KakiGroup.h"
 #include "Capit.h"
 #include "SensorJarakGroup.h"
 #include "Kamera.h"
 #include "Sweeper.h"
-#include "Kompas.h"
 
 class Robot{
   public:
@@ -39,12 +39,11 @@ class Robot{
 
     void maju(){
         kaki.jalan(MAJU);
-        delay(50);
     }
 
     void mundur(){
-          kaki.jalan(MUNDUR);
-          delay(50);
+        kaki.jalan(MUNDUR);
+        delayMicroseconds(10);
     }
 
     void putarKiri(){
@@ -195,7 +194,7 @@ class Robot{
       berdiri();
       for(int i = 0 ; i < 6 ; i++){
           kaki.putar(14, KIRI);
-          delay(100);
+          delay(50);
         }
 
       delay(100);
@@ -219,6 +218,6 @@ class Robot{
     void point2(){
       for(int i = 0 ; i < 6 ; i++)
         kaki.jalanNendang(MAJU);
-        delay(40);
+        delay(50);
     }
 };

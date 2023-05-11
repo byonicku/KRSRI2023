@@ -25,7 +25,7 @@ class KakiGroup{
       // Constructor utama untuk kaki, gunakan grouping yang tepat.
 
       this->standPoint = {0,-43,33}; // Titik berdiri utama default : {0, -40, -30};
-      this->standPointNendang = {0,-5,23};
+      this->standPointNendang = {0,-32, 38}; //-37 43 //-40 30
     }
     
     void init(){
@@ -58,7 +58,7 @@ class KakiGroup{
       LB.berdiriNendang();
       RB.berdiriNendang();
 
-      // Set kaki ke poin berdiri (standpoint)
+      // Set kaki ke poin berdiri (standpointNendang)
     }
 
     void langkah(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
@@ -124,16 +124,16 @@ class KakiGroup{
     }
 
     void jalanNendang(int dir){
-      vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
+      vec3_t tinggi = {0,0,0}; // Mengatur ketinggian dari langkah
 
-      vec3_t P1 = rotateMatrix(this->standPointNendang, 13 * dir);
-      vec3_t P4 = rotateMatrix(this->standPointNendang, -13 * dir); 
+      vec3_t P1 = rotateMatrix(this->standPointNendang, 10 * dir);
+      vec3_t P4 = rotateMatrix(this->standPointNendang, -10 * dir);
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
       vec3_t naik = tinggi + this->standPointNendang;
 
-      langkahNendang(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
-      langkahNendang(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
+      langkahNendang(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointNendang,P1));
+      langkahNendang(bukanTrajectory(P4,this->standPointNendang,P1), bukanTrajectory(P1,naik,P4));
 
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
