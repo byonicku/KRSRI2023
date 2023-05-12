@@ -7,7 +7,7 @@ class Kaki{
     int grup; // GRUP 1 / 2
     int letak; // DEPAN / TENGAH / BELAKANG
     vec3_t standPoint; // Titik berdiri semut
-    vec3_t standPointTinggi; // Titik berdiri cuma untuk jalan nendang
+    vec3_t standPointTinggi; // Titik berdiri tinggi
 
   public:    
     Kaki(){
@@ -24,15 +24,8 @@ class Kaki{
       this->grup = grup;
       this->letak = letak;
       
-      this->standPoint = {0,-43,33}; // Default {0,-40,30};
+      this->standPoint = {0, -43, 33}; // Default {0,-40,30};
       this->standPointTinggi = {0, -32, 38}; // -37, 43 //-40 30
-      
-      // if(letak == DEPAN)
-      //   this->standPoint = rotateMatrix(this->standPoint, 15 * KIRI * this->pos);
-      // else if(letak == BELAKANG)
-      //   this->standPoint = rotateMatrix(this->standPoint, 15 * KANAN * this->pos);
-
-      // Sudah di test dan hasil lebih baik tanpa rotasi
     }
 
     void langkah(vec3_t pointMaju, vec3_t pointMundur){
@@ -47,14 +40,13 @@ class Kaki{
 
         if(this->grup == GRUP1){
           pointMaju.x *= this->pos;
-          // pointMaju.y *= this->pos;
           moveToPoint(pointMaju);
         }
         else{
           pointMundur.x *= this->pos;
-          // pointMundur.y *= this->pos;
           moveToPoint(pointMundur);
         }
+        
         delayMicroseconds(10);
     }
 
@@ -70,14 +62,13 @@ class Kaki{
 
         if(this->grup == GRUP1){
           pointMaju.x *= this->pos;
-          // pointMaju.y *= this->pos;
-          moveToPointTinggi\(pointMaju);
+          moveToPointTinggi(pointMaju);
         }
         else{
           pointMundur.x *= this->pos;
-          // pointMundur.y *= this->pos;
-          moveToPointTinggi\(pointMundur);
+          moveToPointTinggi(pointMundur);
         }
+
         delayMicroseconds(10);
     }
 
@@ -98,7 +89,7 @@ class Kaki{
           moveToPoint(pointMundur);
         }
 
-        delayMicroseconds(10); // default 10
+        delayMicroseconds(10);
     }
 
     void moveToPoint(vec3_t target){
@@ -116,16 +107,15 @@ class Kaki{
         // Serial.println(deggs.z);
         // Serial.print(mapServo(deggs.x));
         // Serial.print(" , ");
-        // Serial.print(mapServo(deggs.y));
+        // Serial.print(mapServo(deggs.y * this->pos * -1));
         // Serial.print(" , ");
-        // Serial.println(mapServo(deggs.z));
+        // Serial.println(mapServo(deggs.z * this->pos));
         // Serial.println();
         
         // Uncomment untuk liat X, Y, Z dari servo
     }
 
     void moveToPointTinggi(vec3_t target){
-        // vec3_t deggs = InversKinematikTinggi(target);
         vec3_t deggs = InversKinematik(target);
 
         ax12a.moveSpeed(coxaID,mapServo(deggs.x), 300);
@@ -150,6 +140,7 @@ class Kaki{
     
     void init(){
         // Inisialiasasi servo ke titik 0
+        // WARNING JANGAN DIGUNAKAN SAAT KAKI SEDANG BERDIRI!!!
         ax12a.move(coxaID,mapServo(0));
         ax12a.move(fermurID,mapServo(0));
         ax12a.move(thibiaID,mapServo(0));
@@ -166,7 +157,7 @@ class Kaki{
     }
 
     // ini dibawah sebelumnya untuk nyari standpoint yg pas :v
-    void cariStandpointPas(){
+    void cariStandpoint(){
       for(int i = -70 ; i < 70 ; i++){
           for(int j = -70 ; j < 70 ; j++){
               this->standPointTinggi = {0, i, j};

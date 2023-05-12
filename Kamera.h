@@ -58,6 +58,7 @@ class Kamera{
 
         void printLocationDummy(){
             // TODO : Get location of the object
+            
             // KANAN X SEMAKIN BESAR
             // KIRI X SEMAKIN KECIL
 
@@ -67,15 +68,6 @@ class Kamera{
 
             //pixy.ccc.blocks[i].m_width -> variabel width
             //pixy.ccc.blocks[i].m_height -> variabel height
-
-            // uint16_t m_signature;
-            // uint16_t m_x;
-            // uint16_t m_y;
-            // uint16_t m_width;
-            // uint16_t m_height;
-            // int16_t m_angle;
-            // uint8_t m_index;
-            // uint8_t m_age;
 
             pixy.ccc.getBlocks();
             

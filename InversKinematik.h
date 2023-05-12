@@ -35,61 +35,14 @@ vec3_t InversKinematik(vec3_t target){
     // Calculate the angle between the femur and tibia links
     float thetaT = acos((pow(fermurLength, 2) + pow(thibiaLength, 2) - pow(a, 2)) / (2 * thibiaLength * fermurLength)) * 180 / PI;
 
-    // Check if the target position is above or below the horizontal plane (y=0)
-    if (target.y > 0) {
-      // If the target is below the plane, subtract 90 degrees from the angle to flip it downwards
-      thetaT -= 90;
-    } else {
-      // If the target is above the plane, add 90 degrees to the angle to flip it upwards
-      thetaT += 90;
-    }
+    thetaT = (target.y > 0 ? thetaT - 90 : thetaT + 90) - 45;
 
-    // Subtract 45 degrees to account for the offset between the tibia link and the foot
-    thetaT -= 45;
     //normalisasi
     thetaC = 90 - thetaC;
     // thetaF = 0 - thetaF - 45; // TIDAK PERLU
-    // thetaT =  0 - (thetaT - 90) - 45; 
+    // thetaT =  0 - (thetaT - 90) - 45; // TIDAK DIPAKAI DIGANTIKAN DENGAN TERNARY OPERATOR DIATAS
 
     return {thetaC,thetaF,thetaT};
-}
-
-vec3_t InversKinematikNendang(vec3_t target){
-    // Fungsi Invers Kinematik
-    
-    float thetaC = atan2(target.z, target.x) * 180/PI;
-    
-    float l = sqrt(pow(target.x, 2) + pow(target.z, 2));
-    float x0 = l - coxaLength;
-    float thetaF1 = atan2(target.y, x0);
-    
-    float a = sqrt(pow(x0, 2) + pow(target.y, 2));
-    
-    float thetaF2 = acos((pow(fermurLength, 2) + pow(a, 2) - pow(thibiaLength, 2) ) / (2 * a * fermurLength));
-    float thetaF = (thetaF1 + thetaF2)* 180/PI;
-
-    // float thetaT = (acos((pow(fermurLength, 2) + pow(thibiaLength, 2) - pow(a, 2) )/ (2 * thibiaLength * fermurLength)) * 180/PI - 90);
-    
-    // Calculate the angle between the femur and tibia links
-    float thetaT = acos((pow(fermurLength, 2) + pow(thibiaLength, 2) - pow(a, 2)) / (2 * thibiaLength * fermurLength)) * 180 / PI;
-
-    // Check if the target position is above or below the horizontal plane (y=0)
-    if (target.y < 0) {
-      // If the target is below the plane, subtract 90 degrees from the angle to flip it downwards
-      thetaT -= 90;
-    } else {
-      // If the target is above the plane, add 90 degrees to the angle to flip it upwards
-      thetaT += 90;
-    }
-
-    // Subtract 45 degrees to account for the offset between the tibia link and the foot
-    thetaT -= 45;
-    //normalisasi
-    thetaC = 90 - thetaC;
-    // thetaF = 0 - thetaF - 45; // TIDAK PERLU
-    // thetaT =  0 - (thetaT - 90) - 45; 
-
-    return {thetaC,thetaF,-thetaT};
 }
 
 int mapServo(int deg){
