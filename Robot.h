@@ -221,7 +221,7 @@ class Robot{
       capit.naikLengan();
     }
 
-    void fixkPos(int index){
+    void fixPos(int index){
       double simpan = 0;
 
       do{
