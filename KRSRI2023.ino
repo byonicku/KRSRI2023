@@ -13,6 +13,7 @@ void setup(){
 
     KSR2023.init();
     KSR2023.kaki.berdiriNendang();
+    delay(500);
     Serial.println("MAJUMAJUMAJU");
     KSR2023.kaki.jalanNendang(MAJU);
     KSR2023.kaki.jalanNendang(MAJU);
@@ -49,7 +50,6 @@ void setup(){
 }
 
 void loop(){
-  // KSR2023.kameraPrintXY();
   // Serial.print(KSR2023.jarak.jarakKiri());
   // Serial.print(", ");
   // Serial.print(KSR2023.jarak.jarakKanan());

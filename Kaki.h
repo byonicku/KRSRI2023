@@ -104,9 +104,9 @@ class Kaki{
     void moveToPoint(vec3_t target){
         vec3_t deggs = InversKinematik(target);
 
-        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 1023);
-        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 1023);
-        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 1023);
+        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 300);
+        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 300);
+        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 300);
         
         // Serial.println();
         // Serial.print(deggs.x);
@@ -132,18 +132,18 @@ class Kaki{
         ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 300);
         ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 300);
         
-        Serial.println();
-        Serial.print(deggs.x);
-        Serial.print(" , ");
-        Serial.print(deggs.y);
-        Serial.print(" , ");
-        Serial.println(deggs.z);
-        Serial.print(mapServo(deggs.x));
-        Serial.print(" , ");
-        Serial.print(mapServo(deggs.y  * this->pos * -1));
-        Serial.print(" , ");
-        Serial.println(mapServo(deggs.z * this->pos));
-        Serial.println();
+        // Serial.println();
+        // Serial.print(deggs.x);
+        // Serial.print(" , ");
+        // Serial.print(deggs.y);
+        // Serial.print(" , ");
+        // Serial.println(deggs.z);
+        // Serial.print(mapServo(deggs.x));
+        // Serial.print(" , ");
+        // Serial.print(mapServo(deggs.y  * this->pos * -1));
+        // Serial.print(" , ");
+        // Serial.println(mapServo(deggs.z * this->pos));
+        // Serial.println();
         
         // Uncomment untuk liat X, Y, Z dari servo
     }
@@ -161,44 +161,32 @@ class Kaki{
     }
 
     void berdiriNendang(){
+      // Mini function untuk berdiri jinjit
       moveToPointNendang(standPointNendang);
-      // ini dibawah sebelumnya untuk nyari standpoint yg pas :v
-// TEST -32
-//  i: -32 j: 38
-// 0.00 , 20.57 , 80.13
-// 512 , 512 , 512
+    }
 
-// TEST -32
-//  i: -32 j: 39
-
-// 0.00 , 21.66 , 80.58
-// 512 , 512 , 512
-
-// TEST -31
-//  i: -31 j: 38
-
-// 0.00 , 22.24 , 79.07
-// 512 , 512 , 512
-      // for(int i = -70 ; i < 70 ; i++){
-      //     for(int j = -70 ; j < 70 ; j++){
-      //         this->standPointNendang = {0, i, j};
-      //         vec3_t deggs = InversKinematik(this->standPointNendang);
-      //         if((deggs.y > 20 && deggs.y < 23) && deggs.x == 0 && (deggs.z > 79 && deggs.z < 81)){
-      //           Serial.print("TEST "); Serial.println(i); Serial.print(" i: "); Serial.print(i); Serial.print(" j: "); Serial.print(j); Serial.println();          
-      //           Serial.println();
-      //           Serial.print(deggs.x);
-      //           Serial.print(" , ");
-      //           Serial.print(deggs.y);
-      //           Serial.print(" , ");
-      //           Serial.println(deggs.z);
-      //           Serial.print(mapServo(deggs.x));
-      //           Serial.print(" , ");
-      //           Serial.print(mapServo(deggs.y * this->pos * -1));
-      //           Serial.print(" , ");
-      //           Serial.println(mapServo(deggs.z * this->pos));
-      //           Serial.println();
-      //         }
-      //     }
-      // }
+    // ini dibawah sebelumnya untuk nyari standpoint yg pas :v
+    void cariStandpointPas(){
+      for(int i = -70 ; i < 70 ; i++){
+          for(int j = -70 ; j < 70 ; j++){
+              this->standPointNendang = {0, i, j};
+              vec3_t deggs = InversKinematik(this->standPointNendang);
+              if((deggs.y > 20 && deggs.y < 23) && deggs.x == 0 && (deggs.z > 79 && deggs.z < 81)){
+                Serial.print("TEST "); Serial.println(i); Serial.print(" i: "); Serial.print(i); Serial.print(" j: "); Serial.print(j); Serial.println();          
+                Serial.println();
+                Serial.print(deggs.x);
+                Serial.print(" , ");
+                Serial.print(deggs.y);
+                Serial.print(" , ");
+                Serial.println(deggs.z);
+                Serial.print(mapServo(deggs.x));
+                Serial.print(" , ");
+                Serial.print(mapServo(deggs.y * this->pos * -1));
+                Serial.print(" , ");
+                Serial.println(mapServo(deggs.z * this->pos));
+                Serial.println();
+              }
+          }
+      }
     }
 };

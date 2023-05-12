@@ -124,10 +124,10 @@ class KakiGroup{
     }
 
     void jalanNendang(int dir){
-      vec3_t tinggi = {0,0,0}; // Mengatur ketinggian dari langkah
+      vec3_t tinggi = {0,-40,0}; // Mengatur ketinggian dari langkah
 
-      vec3_t P1 = rotateMatrix(this->standPointNendang, 10 * dir);
-      vec3_t P4 = rotateMatrix(this->standPointNendang, -10 * dir);
+      vec3_t P1 = rotateMatrix(this->standPointNendang, 17 * dir);
+      vec3_t P4 = rotateMatrix(this->standPointNendang, -17 * dir);
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
       vec3_t naik = tinggi + this->standPointNendang;

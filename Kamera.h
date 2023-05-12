@@ -56,7 +56,7 @@ class Kamera{
             return pixy.ccc.blocks[i].m_y;
         }
 
-        void getLocationDUMMY(){
+        void printLocationDummy(){
             // TODO : Get location of the object
             // KANAN X SEMAKIN BESAR
             // KIRI X SEMAKIN KECIL
