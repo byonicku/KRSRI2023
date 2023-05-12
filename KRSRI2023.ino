@@ -12,26 +12,26 @@ void setup(){
     Serial.begin(9600);
 
     KSR2023.init();
-    KSR2023.kaki.berdiriNendang();
+    KSR2023.kaki.berdiriTinggi();
     delay(500);
     Serial.println("MAJUMAJUMAJU");
-    KSR2023.kaki.jalanNendang(MAJU);
-    KSR2023.kaki.jalanNendang(MAJU);
-    KSR2023.kaki.jalanNendang(MAJU);
+    KSR2023.kaki.jalanTinggi(MAJU);
+    KSR2023.kaki.jalanTinggi(MAJU);
+    KSR2023.kaki.jalanTinggi(MAJU);
     // Kaki kaki;
-    // kaki.berdiriNendang();
+    // kaki.berdiriTinggi();
     Serial.println("Sel");
     // KSR2023.maju();
     // KSR2023.maju();
     // KSR2023.maju();
     // KSR2023.maju();
     // KSR2023.maju();
-    // KSR2023.kaki.berdiriNendang();
+    // KSR2023.kaki.berdiriTinggi();
     // KSR2023.point2();
-    // KSR2023.kaki.berdiriNendang();
+    // KSR2023.kaki.berdiriTinggi();
 
     // Kaki kaki;
-    // kaki.berdiriNendang();
+    // kaki.berdiriTinggi();
 
     // KSR2023.checkPosition();
     // KSR2023.point1();

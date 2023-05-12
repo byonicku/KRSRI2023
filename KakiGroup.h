@@ -11,7 +11,7 @@ class KakiGroup{
     Kaki RM; // Kanan Tengah
     Kaki RB; // Kanan Belakang
     vec3_t standPoint; // Titik Berdiri Semut
-    vec3_t standPointNendang; // Titik berdiri cuma untuk jalan nendang
+    vec3_t standPointTinggi; // Titik berdiri cuma untuk jalan nendang
 
   public:
     KakiGroup(){
@@ -25,7 +25,7 @@ class KakiGroup{
       // Constructor utama untuk kaki, gunakan grouping yang tepat.
 
       this->standPoint = {0,-43,33}; // Titik berdiri utama default : {0, -40, -30};
-      this->standPointNendang = {0,-32, 38}; //-37 43 //-40 30
+      this->standPointTinggi = {0,-32, 38}; //-37 43 //-40 30
     }
     
     void init(){
@@ -50,15 +50,15 @@ class KakiGroup{
       // Set kaki ke poin berdiri (standpoint)
     }
 
-    void berdiriNendang(){
-      LF.berdiriNendang();
-      RF.berdiriNendang();
-      LM.berdiriNendang();
-      RM.berdiriNendang();
-      LB.berdiriNendang();
-      RB.berdiriNendang();
+    void berdiriTinggi(){
+      LF.berdiriTinggi();
+      RF.berdiriTinggi();
+      LM.berdiriTinggi();
+      RM.berdiriTinggi();
+      LB.berdiriTinggi();
+      RB.berdiriTinggi();
 
-      // Set kaki ke poin berdiri (standpointNendang)
+      // Set kaki ke poin berdiri (standpointTinggi)
     }
 
     void langkah(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
@@ -77,17 +77,17 @@ class KakiGroup{
       // Queue berjalan untuk kaki
     }
 
-    void langkahNendang(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
+    void langkahTinggi(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
       do{
         vec3_t tempMaju = stepsMaju.dequeue();
         vec3_t tempMundur = stepsMundur.dequeue();
             
-        LF.langkahNendang(tempMaju,tempMundur);
-        RF.langkahNendang(tempMaju,tempMundur);
-        LM.langkahNendang(tempMaju,tempMundur);
-        RM.langkahNendang(tempMaju,tempMundur);
-        LB.langkahNendang(tempMaju,tempMundur);
-        RB.langkahNendang(tempMaju,tempMundur);
+        LF.langkahTinggi(tempMaju,tempMundur);
+        RF.langkahTinggi(tempMaju,tempMundur);
+        LM.langkahTinggi(tempMaju,tempMundur);
+        RM.langkahTinggi(tempMaju,tempMundur);
+        LB.langkahTinggi(tempMaju,tempMundur);
+        RB.langkahTinggi(tempMaju,tempMundur);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
 
       // Queue berjalan untuk kaki nendang
@@ -123,17 +123,17 @@ class KakiGroup{
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
 
-    void jalanNendang(int dir){
+    void jalanTinggi(int dir){
       vec3_t tinggi = {0,-40,0}; // Mengatur ketinggian dari langkah
 
-      vec3_t P1 = rotateMatrix(this->standPointNendang, 17 * dir);
-      vec3_t P4 = rotateMatrix(this->standPointNendang, -17 * dir);
+      vec3_t P1 = rotateMatrix(this->standPointTinggi, 17 * dir);
+      vec3_t P4 = rotateMatrix(this->standPointTinggi, -17 * dir);
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
-      vec3_t naik = tinggi + this->standPointNendang;
+      vec3_t naik = tinggi + this->standPointTinggi;
 
-      langkahNendang(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointNendang,P1));
-      langkahNendang(bukanTrajectory(P4,this->standPointNendang,P1), bukanTrajectory(P1,naik,P4));
+      langkahTinggi(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointTinggi,P1));
+      langkahTinggi(bukanTrajectory(P4,this->standPointTinggi,P1), bukanTrajectory(P1,naik,P4));
 
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
