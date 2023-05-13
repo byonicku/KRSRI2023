@@ -34,15 +34,10 @@ class Robot{
         kamera.init();
         kompas.init();
         sweeper.init();
-        delay(1000);
-
+        delay(200);
         capit.init();
-        delay(1000);
-        
+        delay(700);
         kaki.berdiri();
-        delay(1000);
-
-        // simpan = kompas.getCurrent();
     }
 
     void berdiri(){
@@ -111,17 +106,6 @@ class Robot{
         
         capit.tutupCapit();
         delay(1000);        
-    }
-
-    // Debug
-    void kameraPrintLocation(){
-        Serial.print(kamera.getX());
-        Serial.print(", ");
-        Serial.print(kamera.getY());
-        Serial.print(", ");
-        Serial.print(kamera.getWidth());
-        Serial.print(", ");
-        Serial.println(kamera.getHeight());
     }
 
     void checkPosition(){
@@ -228,12 +212,42 @@ class Robot{
           simpan = kompas.getCurrent().x;
 
           if(simpan < yaw[index] - 2)
-              kaki.putar(5, KANAN);
+              kaki.putar(3, KANAN);
           
           if(simpan > yaw[index] + 2)
-              kaki.putar(5, KIRI);
+              kaki.putar(3, KIRI);
           
       }while(simpan < yaw[index] - 2 || simpan > yaw[index] + 2);
+    }
+
+    void fixPosTinggi(int index){
+      double simpan = 0;
+
+      do{
+          simpan = kompas.getCurrent().x;
+
+          if(simpan < yaw[index] - 2)
+              kaki.putarTinggi(3, KANAN);
+          
+          if(simpan > yaw[index] + 2)
+              kaki.putarTinggi(3, KIRI);
+          
+      }while(simpan < yaw[index] - 2 || simpan > yaw[index] + 2);
+    }
+
+    void setPosTinggiCustom(int index, int custom){
+      double simpan = 0;
+
+      do{
+          simpan = kompas.getCurrent().x;
+
+          if(simpan < yaw[index] - 3.2 + custom)
+              kaki.putarTinggi(5, KANAN);
+          
+          if(simpan > yaw[index] + 3.2 + custom)
+              kaki.putarTinggi(6, KIRI);
+          
+      }while(simpan < yaw[index] - 2 + custom|| simpan > yaw[index] + 2 + custom);
     }
 
     void point1(){
@@ -244,7 +258,7 @@ class Robot{
         if(langkah % 3 == 0 && langkah != 0){
           fixPos(0);
 
-          if(jarak.jarakBelakang() > 278)
+          if(jarak.jarakBelakang() > 300)
             break;
         }
 
@@ -266,9 +280,8 @@ class Robot{
       while(1) {
         mundur();
 
-        if(jarak.jarakBelakang() <= 50) break;
+        if(jarak.jarakBelakang() <= 60) break;
       }
-
 
       // Mengambil korban
       getKorban();
@@ -277,7 +290,7 @@ class Robot{
       while(1) {
         mundur();
 
-        if(jarak.jarakBelakang() <= 120) break;
+        if(jarak.jarakBelakang() <= 135) break;
       }
 
       berdiri();
@@ -294,8 +307,8 @@ class Robot{
       delayMicroseconds(100);
 
       while(1){
-        if(langkah % 3 == 0 && langkah != 0) fixPos(0);
-        if(kompas.getCurrent().z < -13) break;
+        if(langkah % 3 == 0 && langkah != 0) fixPosTinggi(0);
+        if(kompas.getCurrent().z < -14.90) break;
 
         majuTinggi();
         langkah++;
@@ -305,48 +318,63 @@ class Robot{
       langkah = 0;
 
       while(1) {
-        if(langkah % 3 == 0 && langkah != 0) fixPos(0);
-        if(jarak.jarakDepan() <= 90) break;
+        if(langkah % 3 == 0 && langkah != 0) {
+          fixPos(0);
+
+          if(jarak.jarakDepan() <= 90) break;
+        }
+       
         maju();
-
-        langkah++;
-      }
-
-      berdiriTinggi();
-      langkah = 0;
-
-      while(1) {
-        if(langkah % 3 == 0 && langkah != 0) fixPos(0);
-        if(jarak.jarakDepan() <= 100) break;
-        majuTinggi();
 
         langkah++;
       }
     }
 
     void point3(){
-      berdiri();
-      int putar, temp;
-      putar = temp = 0;
-      while(1){
-        if(jarak.jarakDepan() > 230)  kaki.putar(7, KANAN);
+      berdiriTinggi();
 
-        if(jarak.jarakDepan() < 150) break;
+      int langkah = 0;
 
-        putar++;
+      while(1) {
+        if(langkah % 3 == 0 && langkah != 0) 
+          fixPosTinggi(0);
+
+        if(jarak.jarakKiri() >= 60) 
+          break;
+
+        majuTinggi();
+
+        langkah++;
       }
       
-      while(jarak.jarakDepan() > 80) maju();
+      langkah = 0;
+
+      while(1) {
+        if(langkah % 3 == 0 && langkah != 0) 
+          fixPosTinggi(0);
+        
+        if(jarak.jarakDepan() <= 105) 
+            break;
+
+        majuTinggi();
+
+        langkah++;
+      }
+    
+      setPosTinggiCustom(0, 20);
+
+      berdiri();
       
-      taruh();
+      capit.turunLengan(); 
+      capit.bukaCapit();
 
-      temp = putar - 2;
+      mundurTinggi();
+      delay(200);
 
-      while(putar-- > 0) kaki.putar(6, KIRI);
+      capit.naikLengan();
+      capit.tutupCapit();
 
-      for(int i = 0 ; i < 2 ; i++) maju();
-
-      while(temp-- > 0)  kaki.putar(6, KIRI);
+      setPosTinggiCustom(1, 20);
     }
 
     void point4(){

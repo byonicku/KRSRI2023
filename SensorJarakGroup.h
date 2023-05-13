@@ -32,4 +32,14 @@ class SensorJarakGroup{
         int jarakBelakang(){
           return belakang.filter();
         }
+
+        void printJarak(){
+            Serial.print(jarakKiri());
+            Serial.print(", ");
+            Serial.print(jarakKanan());
+            Serial.print(", ");
+            Serial.print(jarakBelakang());
+            Serial.print(", ");
+            Serial.println(jarakDepan());
+        }
 };

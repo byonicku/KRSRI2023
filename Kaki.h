@@ -92,6 +92,26 @@ class Kaki{
         delayMicroseconds(10);
     }
 
+    void langkahPutarTinggi(vec3_t pointMaju, vec3_t pointMundur){
+        if(this->letak == DEPAN){
+          pointMaju = rotateMatrix(pointMaju, 15 * this->pos);
+          pointMundur = rotateMatrix(pointMundur, 15 * this->pos);
+        }
+        else if(this->letak == BELAKANG){
+          pointMaju = rotateMatrix(pointMaju, -15 * this->pos );
+          pointMundur = rotateMatrix(pointMundur, -15 * this->pos);
+        } 
+
+        if(this->grup == GRUP1){
+          moveToPointTinggi(pointMaju);
+        }
+        else{
+          moveToPointTinggi(pointMundur);
+        }
+
+        delayMicroseconds(10);
+    }
+
     void moveToPoint(vec3_t target){
         vec3_t deggs = InversKinematik(target);
 

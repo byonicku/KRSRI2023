@@ -108,6 +108,21 @@ class KakiGroup{
       // Queue berjalan untuk kaki
     }
 
+    void langkahPutarTinggi(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
+      do{
+        vec3_t tempMaju = stepsMaju.dequeue();
+        vec3_t tempMundur = stepsMundur.dequeue();
+            
+        LF.langkahPutarTinggi(tempMaju,tempMundur);
+        RF.langkahPutarTinggi(tempMaju,tempMundur);
+        LM.langkahPutarTinggi(tempMaju,tempMundur);
+        RM.langkahPutarTinggi(tempMaju,tempMundur);
+        LB.langkahPutarTinggi(tempMaju,tempMundur);
+        RB.langkahPutarTinggi(tempMaju,tempMundur);
+      }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
+      // Queue berjalan untuk kaki
+    }
+
     void jalan(int dir){
       vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
 
@@ -148,5 +163,17 @@ class KakiGroup{
       
       langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
       langkahPutar(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
+    }
+
+    void putarTinggi(float deg,int dir){
+      vec3_t tinggi = {0,-40,0}; // Mengatur ketinggian dari langkah
+
+      vec3_t P1 = rotateMatrix(this->standPointTinggi, deg * dir);
+      vec3_t P4 = rotateMatrix(this->standPointTinggi, deg *-1 * dir);
+
+      vec3_t naik = tinggi + this->standPointTinggi;
+      
+      langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointTinggi,P1));
+      langkahPutar(bukanTrajectory(P4,this->standPointTinggi,P1), bukanTrajectory(P1,naik,P4));
     }
 };
