@@ -46,6 +46,21 @@ class Capit{
       // Prosedur untuk menaikan lengan secara perlahan dengan kecepatan 5 derajat per 65ms sampai 135 derajat maksimal
     }
 
+     void naikLenganDikit(){ 
+      for(int pos = 140 ; pos >= 120 ; pos -= 5){
+          lengan.write(pos);
+          delay(65);
+      }
+      // Prosedur untuk menaikan lengan secara perlahan dengan kecepatan 5 derajat per 65ms sampai 135 derajat maksimal
+    }
+
+    void naikLenganLanjutan(){
+      for(int pos = 120 ; pos >= 0 ; pos -= 5){
+          lengan.write(pos);
+          delay(65);
+      }
+    }
+
     void turunLengan(){
       for(int pos = 0 ; pos <= 140 ; pos += 5){
           lengan.write(pos);

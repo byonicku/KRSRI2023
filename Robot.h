@@ -169,9 +169,10 @@ class Robot{
 
       delay(500);
       capit.tutupCapit();
+      capit.naikLenganDikit();
       mundur();
       delay(50);
-      capit.naikLengan();
+      capit.naikLenganLanjutan();
     }
 
     void getKorbanTinggi(){
@@ -224,6 +225,21 @@ class Robot{
       }while(simpan < yaw[index] - 2 || simpan > yaw[index] + 2);
     }
 
+    void fixPosCustom(int index, int custom){
+      double simpan = 0;
+
+      do{
+          simpan = kompas.getCurrent().x;
+
+          if(simpan < yaw[index] - custom)
+              kaki.putar(3, KANAN);
+          
+          if(simpan > yaw[index] + custom)
+              kaki.putar(3, KIRI);
+          
+      }while(simpan < yaw[index] - custom || simpan > yaw[index] + custom);
+    }
+
     void setPos(int index, int custom){
       double simpan = 0;
 
@@ -245,13 +261,28 @@ class Robot{
       do{
           simpan = kompas.getCurrent().x;
 
-          if(simpan < yaw[index] - 2)
-              kaki.putarTinggi(3, KANAN);
+          if(simpan < yaw[index] - 3.5)
+              kaki.putarTinggi(4, KANAN);
           
-          if(simpan > yaw[index] + 2)
-              kaki.putarTinggi(3, KIRI);
+          if(simpan > yaw[index] + 3.5)
+              kaki.putarTinggi(5, KIRI);
           
-      }while(simpan < yaw[index] - 2 || simpan > yaw[index] + 2);
+      }while(simpan < yaw[index] - 3.5 || simpan > yaw[index] + 3.5);
+    }
+
+    void fixPosTinggiCustom(int index, int custom){
+      double simpan = 0;
+
+      do{
+          simpan = kompas.getCurrent().x;
+
+          if(simpan < yaw[index] - 40)
+              kaki.putarTinggi(4, KANAN);
+          
+          if(simpan > yaw[index] + 40)
+              kaki.putarTinggi(5, KIRI);
+          
+      }while(simpan < yaw[index] - 40 || simpan > yaw[index] + 40);
     }
 
     void setPosTinggi(int index, int custom){
@@ -274,13 +305,12 @@ class Robot{
 
       // Langkah ke depan korban 1
       while(1){
-        if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0);
-
-          if(jarak.jarakBelakang() > 300)
+        if(jarak.jarakBelakang() >= 380)
             break;
-        }
 
+        if(langkah % 3 == 0 && langkah != 0)
+          fixPos(0);
+        
         maju();
         langkah++;
       }
@@ -291,25 +321,28 @@ class Robot{
       putarKiri();
       fixPos(1);
 
-      delayMicroseconds(100);
-
       berdiri();
 
       // Mundur untuk meluruskan
       while(1) {
-        mundur();
-
-        if(jarak.jarakBelakang() <= 60) break;
+        if(jarak.jarakBelakang() <= 330) 
+            break;
+        
+        mundur();    
       }
 
       // Mengambil korban
       getKorban();
       
       // Mundur ke titik tertentu agar kaki dapat masuk ke area retak
+      langkah = 0;
       while(1) {
         mundur();
 
-        if(jarak.jarakBelakang() <= 143) break;
+        if(jarak.jarakBelakang() <= 298)
+            break;
+        if(langkah % 3 == 0 && langkah != 0)
+            fixPos(1);
       }
 
       berdiri();
@@ -317,6 +350,19 @@ class Robot{
       // Putar kanan dan luruskan
       putarKanan();
       fixPos(0);
+
+      langkah = 0;
+
+      while(1){
+        if(jarak.jarakBelakang() >= 380)
+            break;
+
+        if(langkah % 3 == 0 && langkah != 0)
+          fixPos(0);
+      
+        maju();
+        langkah++;
+      }
     }
 
     void point2(){
@@ -326,9 +372,11 @@ class Robot{
       delayMicroseconds(100);
 
       while(1){
-        if(langkah % 3 == 0 && langkah != 0) fixPosTinggi(0);
-        if(kompas.getCurrent().z < -14.90) break;
-
+        if(kompas.getCurrent().z < -13.5)
+            break;
+        if(langkah % 3 == 0 && langkah != 0) 
+            fixPosTinggiCustom(0, 15);
+        
         majuTinggi();
         langkah++;
       }
@@ -337,14 +385,12 @@ class Robot{
       langkah = 0;
 
       while(1) {
-        if(langkah % 3 == 0 && langkah != 0) {
+        if(kompas.getCurrent().z > -1.5) 
+            break;
+        if(langkah % 3 == 0 && langkah != 0) 
           fixPos(0);
 
-          if(jarak.jarakDepan() <= 90) break;
-        }
-       
         maju();
-
         langkah++;
       }
     }
@@ -355,28 +401,26 @@ class Robot{
       int langkah = 0;
 
       while(1) {
-        if(langkah % 3 == 0 && langkah != 0) 
-          fixPosTinggi(0);
-
         if(jarak.jarakKiri() >= 60) 
           break;
 
-        majuTinggi();
+        if(langkah % 3 == 0 && langkah != 0) 
+          fixPosTinggi(0);
 
+        majuTinggi();
         langkah++;
       }
       
       langkah = 0;
 
       while(1) {
+        if(jarak.jarakDepan() <= 210) 
+            break;
+
         if(langkah % 3 == 0 && langkah != 0) 
           fixPosTinggi(0);
         
-        if(jarak.jarakDepan() <= 105) 
-            break;
-
         majuTinggi();
-
         langkah++;
       }
     
@@ -393,16 +437,17 @@ class Robot{
       capit.naikLengan();
       capit.tutupCapit();
 
-      setPosTinggi(1, 20);
+      setPosTinggi(1, 25);
     }
 
     void point4(){
       berdiriTinggi();
 
       while(1) {
-        majuTinggi();
+        if(jarak.jarakDepan() < 300) 
+          break;
 
-        if(jarak.jarakDepan() < 300) break;
+        majuTinggi();
       }
 
       putarKiri();

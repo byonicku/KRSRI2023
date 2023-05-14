@@ -1,45 +1,43 @@
 #include "SensorJarak.h"
 
-class SensorJarakGroup{
-    public:
-        SensorJarak depan;
-        SensorJarak belakang;
-        SensorJarak kiri;
-        SensorJarak kanan;
+class SensorJarakGroup {
+  private:
+    SensorJarak depan;
+    SensorJarak belakang;
+    SensorJarak kiri;
+    SensorJarak kanan;
 
-        SensorJarakGroup(){
-            // Constructor untuk Grouping Sensor Jarak, gunakan pin yang sama untuk trigger dan echo
-            // Urutan parameter (echo, trigger)
-            
-            depan =  SensorJarak(7,6);
-            belakang = SensorJarak(13,12);
-            kiri = SensorJarak(8,9);
-            kanan  = SensorJarak(11,10);
-        }
+  public:
+    SensorJarakGroup() :
+      depan(7, 6, 10),
+      belakang(13, 12, 10),
+      kiri(8, 9, 10),
+      kanan(11, 10, 10)
+    {}
 
-        int jarakKiri(){
-          return kiri.filter();
-        }
-        
-        int jarakKanan(){
-          return kanan.filter();
-        }
+    int jarakKiri() {
+      return kiri.bacaJarak();
+    }
+    
+    int jarakKanan() {
+      return kanan.bacaJarak();
+    }
 
-        int jarakDepan(){
-          return depan.filter();
-        }
+    int jarakDepan() {
+      return depan.bacaJarak();
+    }
 
-        int jarakBelakang(){
-          return belakang.filter();
-        }
+    int jarakBelakang() {
+      return belakang.bacaJarak();
+    }
 
-        void printJarak(){
-            Serial.print(jarakKiri());
-            Serial.print(", ");
-            Serial.print(jarakKanan());
-            Serial.print(", ");
-            Serial.print(jarakBelakang());
-            Serial.print(", ");
-            Serial.println(jarakDepan());
-        }
+    void printJarak() {
+      Serial.print(jarakKiri());
+      Serial.print(", ");
+      Serial.print(jarakKanan());
+      Serial.print(", ");
+      Serial.print(jarakBelakang());
+      Serial.print(", ");
+      Serial.println(jarakDepan());
+    }
 };
