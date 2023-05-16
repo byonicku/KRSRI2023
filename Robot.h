@@ -60,6 +60,8 @@ class Robot{
     }   
 
     void checkPosition(){
+      // BUGGY BISA DI COBA DULU TES KARENA SENSOR JARAK UPDATE CODE JADI PERLU DI CEK ULANG
+      
       // kalo depan kosong -> (jarak jauh) langsung skip sekuens ini
       // kalo kanan kosong -> putar kanan
       // kalo kiri kosong -> putar kiri
