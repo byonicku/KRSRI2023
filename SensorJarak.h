@@ -17,7 +17,7 @@ class SensorJarak {
       pinMode(echoPin, INPUT);
     }
 
-    int bacaJarak() {
+    float bacaJarak() {
       resetTrigger();
       digitalWrite(trigPin, HIGH);
       delayMicroseconds(10);
@@ -32,7 +32,7 @@ class SensorJarak {
         average += buffer[i];
       }
       average /= bufferSize;
-      return (int)average;
+      return average;
     }
 
     void resetTrigger() {

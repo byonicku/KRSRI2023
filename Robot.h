@@ -91,6 +91,8 @@ class Robot{
     }   
 
     void checkPosition(){
+      // BUGGY BISA DI COBA DULU TES KARENA SENSOR JARAK UPDATE CODE JADI PERLU DI CEK ULANG
+
       // kalo depan kosong -> (jarak jauh) langsung skip sekuens ini
       // kalo kanan kosong -> putar kanan
       // kalo kiri kosong -> putar kiri
@@ -119,7 +121,7 @@ class Robot{
         kaki.putar(14, KIRI);
         kaki.berdiri();
       }
-      else if(jarak.jarakKiri() >= 245){ // Berarti lagi ngadep kanan
+      else if(jarak.jarakKiri() >= 250){ // Berarti lagi ngadep kanan
         yaw[2] = kompas.getCurrent().x; 
         
         if(yaw[2] < 0) yaw[1] = yaw[2] + 180;
@@ -141,7 +143,7 @@ class Robot{
 
         putarKanan();
       }
-      else { // Ngadep depan
+      else if(jarak.jarakDepan() >= 250){ // Ngadep depan
         yaw[0] = kompas.getCurrent().x;
         
         if(yaw[0] < 0) yaw[3] = yaw[0] + 180;
