@@ -53,12 +53,25 @@ class Robot{
         kaki.jalan(MAJU);
     }
 
+    void majuCustom(int sudut){
+        kaki.jalanCustom(MAJU, sudut);
+    }
+
+
     void majuTinggi(){
         kaki.jalanTinggi(MAJU);
     }
 
+    void majuTinggiCustom(int heigth, int sudut){
+        kaki.jalanTinggiCustom(MAJU, heigth, sudut);
+    }
+
     void mundur(){
         kaki.jalan(MUNDUR);
+    }
+
+    void mundurCustom(int sudut){
+        kaki.jalanCustom(MUNDUR, sudut);
     }
     
     void mundurTinggi(){
@@ -276,13 +289,13 @@ class Robot{
       do{
           simpan = kompas.getCurrent().x;
 
-          if(simpan < yaw[index] - 40)
-              kaki.putarTinggi(4, KANAN);
+          if(simpan < yaw[index] - custom)
+              kaki.putarTinggi(6, KANAN);
           
-          if(simpan > yaw[index] + 40)
-              kaki.putarTinggi(5, KIRI);
+          if(simpan > yaw[index] + custom)
+              kaki.putarTinggi(7, KIRI);
           
-      }while(simpan < yaw[index] - 40 || simpan > yaw[index] + 40);
+      }while(simpan < yaw[index] - custom || simpan > yaw[index] + custom);
     }
 
     void setPosTinggi(int index, int custom){
@@ -297,7 +310,7 @@ class Robot{
           if(simpan > yaw[index] + 3.2 + custom)
               kaki.putarTinggi(7, KIRI);
           
-      }while(simpan < yaw[index] - 2 + custom|| simpan > yaw[index] + 2 + custom);
+      }while(simpan < yaw[index] - 3.2 + custom|| simpan > yaw[index] + 3.2 + custom);
     }
 
     void point1(){
@@ -305,7 +318,7 @@ class Robot{
 
       // Langkah ke depan korban 1
       while(1){
-        if(jarak.jarakBelakang() >= 380)
+        if(jarak.jarakBelakang() >= 400)
             break;
 
         if(langkah % 3 == 0 && langkah != 0)
@@ -325,10 +338,9 @@ class Robot{
 
       // Mundur untuk meluruskan
       while(1) {
-        if(jarak.jarakBelakang() <= 330) 
+        mundur();
+        if(jarak.jarakBelakang() <= 380) 
             break;
-        
-        mundur();    
       }
 
       // Mengambil korban
@@ -337,12 +349,13 @@ class Robot{
       // Mundur ke titik tertentu agar kaki dapat masuk ke area retak
       langkah = 0;
       while(1) {
-        mundur();
-
-        if(jarak.jarakBelakang() <= 298)
+        
+        if(jarak.jarakBelakang() <= 410)
             break;
         if(langkah % 3 == 0 && langkah != 0)
             fixPos(1);
+         mundurCustom(5);   
+        langkah++; 
       }
 
       berdiri();
@@ -354,15 +367,16 @@ class Robot{
       langkah = 0;
 
       while(1){
-        if(jarak.jarakBelakang() >= 380)
+        if(jarak.jarakBelakang() >= 430)
             break;
 
         if(langkah % 3 == 0 && langkah != 0)
           fixPos(0);
       
-        maju();
+        majuCustom(5);
         langkah++;
       }
+      fixPos(0);
     }
 
     void point2(){
@@ -374,10 +388,11 @@ class Robot{
       while(1){
         if(kompas.getCurrent().z < -13.5)
             break;
-        if(langkah % 3 == 0 && langkah != 0) 
+        if(langkah % 3 == 0 && langkah != 0){
             fixPosTinggiCustom(0, 15);
+        }
         
-        majuTinggi();
+        majuTinggiCustom(45, 17);
         langkah++;
       }
 
@@ -397,64 +412,69 @@ class Robot{
 
     void point3(){
       berdiriTinggi();
+      fixPosTinggi(0);
+      berdiriTinggi();
 
       int langkah = 0;
 
-      while(1) {
-        if(jarak.jarakKiri() >= 60) 
-          break;
+      // while(1) {
+      //   if(jarak.jarakKiri() >= 60) 
+      //     break;
 
-        if(langkah % 3 == 0 && langkah != 0) 
-          fixPosTinggi(0);
+      //   if(langkah % 3 == 0 && langkah != 0) 
+      //     fixPosTinggi(0);
 
-        majuTinggi();
-        langkah++;
-      }
+      //   majuTinggi();
+      //   langkah++;
+      // }
       
-      langkah = 0;
+      // langkah = 0;
 
       while(1) {
-        if(jarak.jarakDepan() <= 210) 
-            break;
-
-        if(langkah % 3 == 0 && langkah != 0) 
+        if(langkah % 3 == 0 && langkah != 0){
           fixPosTinggi(0);
+          if(jarak.jarakDepan() <= 180) 
+            break;
+        }
         
-        majuTinggi();
+        majuTinggiCustom(40, 5);
         langkah++;
       }
     
       setPosTinggi(0, 25);
 
-      berdiri();
+      berdiriTinggi();
       
       capit.turunLengan(); 
       capit.bukaCapit();
-
-      mundurTinggi();
       delay(200);
 
       capit.naikLengan();
       capit.tutupCapit();
-
-      setPosTinggi(1, 25);
+      
+      setPosTinggi(1, 0);
     }
 
     void point4(){
       berdiriTinggi();
 
+      int langkah = 0;
       while(1) {
-        if(jarak.jarakDepan() < 300) 
-          break;
-
-        majuTinggi();
+        if(langkah % 3 == 0 && langkah != 0){
+          fixPosTinggi(0);
+          if(jarak.jarakDepan() <= 200) 
+            break;
+        }
+        
+        majuTinggiCustom(40, 12);
+        langkah++;
       }
 
       putarKiri();
 
-      berdiri();
+      berdiriTinggi();
 
-      getKorban();
+      getKorbanTinggi();
 
       berdiriTinggi();
 
