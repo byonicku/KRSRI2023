@@ -29,6 +29,7 @@ class Kaki{
     }
 
     void langkah(vec3_t pointMaju, vec3_t pointMundur){
+      // DEFAULT DERAJAT 10
         if(this->letak == DEPAN){
           pointMaju = rotateMatrix(pointMaju, 10);
           pointMundur = rotateMatrix(pointMundur, 10);
@@ -50,35 +51,14 @@ class Kaki{
         delayMicroseconds(10);
     }
 
-    void langkahTinggi(vec3_t pointMaju, vec3_t pointMundur){
-        if(this->letak == DEPAN){
-          pointMaju = rotateMatrix(pointMaju, 10);
-          pointMundur = rotateMatrix(pointMundur, 10);
-        }
-        else if(this->letak == BELAKANG){
-          pointMaju = rotateMatrix(pointMaju, -10);
-          pointMundur = rotateMatrix(pointMundur, -10);
-        } 
-
-        if(this->grup == GRUP1){
-          pointMaju.x *= this->pos;
-          moveToPointTinggi(pointMaju);
-        }
-        else{
-          pointMundur.x *= this->pos;
-          moveToPointTinggi(pointMundur);
-        }
-
-        delayMicroseconds(10);
-    }
-
-    void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){
+    void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){ 
+      // DEFAULT DERAJAT 15
         if(this->letak == DEPAN){
           pointMaju = rotateMatrix(pointMaju, 15 * this->pos);
           pointMundur = rotateMatrix(pointMundur, 15 * this->pos);
         }
         else if(this->letak == BELAKANG){
-          pointMaju = rotateMatrix(pointMaju, -15 * this->pos );
+          pointMaju = rotateMatrix(pointMaju, -15 * this->pos);
           pointMundur = rotateMatrix(pointMundur, -15 * this->pos);
         } 
 
@@ -87,26 +67,6 @@ class Kaki{
         }
         else{
           moveToPoint(pointMundur);
-        }
-
-        delayMicroseconds(10);
-    }
-
-    void langkahPutarTinggi(vec3_t pointMaju, vec3_t pointMundur){
-        if(this->letak == DEPAN){
-          pointMaju = rotateMatrix(pointMaju, 15 * this->pos);
-          pointMundur = rotateMatrix(pointMundur, 15 * this->pos);
-        }
-        else if(this->letak == BELAKANG){
-          pointMaju = rotateMatrix(pointMaju, -15 * this->pos );
-          pointMundur = rotateMatrix(pointMundur, -15 * this->pos);
-        } 
-
-        if(this->grup == GRUP1){
-          moveToPointTinggi(pointMaju);
-        }
-        else{
-          moveToPointTinggi(pointMundur);
         }
 
         delayMicroseconds(10);
@@ -134,29 +94,6 @@ class Kaki{
         
         // Uncomment untuk liat X, Y, Z dari servo
     }
-
-    void moveToPointTinggi(vec3_t target){
-        vec3_t deggs = InversKinematik(target);
-
-        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 300);
-        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 300);
-        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 300);
-        
-        // Serial.println();
-        // Serial.print(deggs.x);
-        // Serial.print(" , ");
-        // Serial.print(deggs.y);
-        // Serial.print(" , ");
-        // Serial.println(deggs.z);
-        // Serial.print(mapServo(deggs.x));
-        // Serial.print(" , ");
-        // Serial.print(mapServo(deggs.y  * this->pos * -1));
-        // Serial.print(" , ");
-        // Serial.println(mapServo(deggs.z * this->pos));
-        // Serial.println();
-        
-        // Uncomment untuk liat X, Y, Z dari servo
-    }
     
     void init(){
         // Inisialiasasi servo ke titik 0
@@ -166,14 +103,12 @@ class Kaki{
         ax12a.move(thibiaID,mapServo(0));
     }
     
-    void berdiri(){
+    void berdiri(int tipeGerakan){
         // Mini function untuk berdiri
-        moveToPoint(standPoint);
-    }
-
-    void berdiriTinggi(){
-      // Mini function untuk berdiri jinjit
-      moveToPointTinggi(standPointTinggi);
+        if(tipeGerakan == NORMAL)
+          moveToPoint(standPoint);
+        else
+          moveToPoint(standPointTinggi);
     }
 
     // ini dibawah sebelumnya untuk nyari standpoint yg pas :v

@@ -39,26 +39,15 @@ class KakiGroup{
       // Set kaki ke poin 0 semua (robot akan jatuh bila tidak menumpu pada sesuatu, hati")
     }
     
-    void berdiri(){
-      LF.berdiri();
-      RF.berdiri();
-      LM.berdiri();
-      RM.berdiri();
-      LB.berdiri();
-      RB.berdiri();
+    void berdiri(int tipeLangkah){
+      LF.berdiri(tipeLangkah);
+      RF.berdiri(tipeLangkah);
+      LM.berdiri(tipeLangkah);
+      RM.berdiri(tipeLangkah);
+      LB.berdiri(tipeLangkah);
+      RB.berdiri(tipeLangkah);
 
       // Set kaki ke poin berdiri (standpoint)
-    }
-
-    void berdiriTinggi(){
-      LF.berdiriTinggi();
-      RF.berdiriTinggi();
-      LM.berdiriTinggi();
-      RM.berdiriTinggi();
-      LB.berdiriTinggi();
-      RB.berdiriTinggi();
-
-      // Set kaki ke poin berdiri (standpointTinggi)
     }
 
     void langkah(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
@@ -77,22 +66,6 @@ class KakiGroup{
       // Queue berjalan untuk kaki
     }
 
-    void langkahTinggi(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
-      do{
-        vec3_t tempMaju = stepsMaju.dequeue();
-        vec3_t tempMundur = stepsMundur.dequeue();
-            
-        LF.langkahTinggi(tempMaju,tempMundur);
-        RF.langkahTinggi(tempMaju,tempMundur);
-        LM.langkahTinggi(tempMaju,tempMundur);
-        RM.langkahTinggi(tempMaju,tempMundur);
-        LB.langkahTinggi(tempMaju,tempMundur);
-        RB.langkahTinggi(tempMaju,tempMundur);
-      }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
-
-      // Queue berjalan untuk kaki nendang
-    }
-
     void langkahPutar(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
       do{
         vec3_t tempMaju = stepsMaju.dequeue();
@@ -108,72 +81,56 @@ class KakiGroup{
       // Queue berjalan untuk kaki
     }
 
-    void langkahPutarTinggi(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur){
-      do{
-        vec3_t tempMaju = stepsMaju.dequeue();
-        vec3_t tempMundur = stepsMundur.dequeue();
-            
-        LF.langkahPutarTinggi(tempMaju,tempMundur);
-        RF.langkahPutarTinggi(tempMaju,tempMundur);
-        LM.langkahPutarTinggi(tempMaju,tempMundur);
-        RM.langkahPutarTinggi(tempMaju,tempMundur);
-        LB.langkahPutarTinggi(tempMaju,tempMundur);
-        RB.langkahPutarTinggi(tempMaju,tempMundur);
-      }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
-      // Queue berjalan untuk kaki
-    }
+    void jalan(int dir, int tipeLangkah, float derajat, int height){
+      //DEFAULT JALAN NORMAL DERAJAT 10
+      //DEFAULT JALAN TINGGI DERAJAT 20
 
-    void jalan(int dir){
-      vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
+      vec3_t tinggi; // Mengatur ketinggian dari langkah
+      vec3_t currStandPoint; // Set current standpoint
+      
+      if(tipeLangkah == NORMAL) {
+        tinggi = {0,-25,0};
+        currStandPoint = this->standPoint;
+      }
+      else {
+        tinggi = {0,-46,0};
+        currStandPoint = this->standPointTinggi;
+      }
 
-      vec3_t P1 = rotateMatrix(this->standPoint, 10 * dir);
-      vec3_t P4 = rotateMatrix(this->standPoint, -10 * dir); 
+      if(height > 0)
+        tinggi = {0, -height, 0};
+          
+      vec3_t P1 = rotateMatrix(currStandPoint, derajat * dir);
+      vec3_t P4 = rotateMatrix(currStandPoint, (-derajat) * dir);
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
-      vec3_t naik = tinggi + this->standPoint;
+      vec3_t naik = tinggi + currStandPoint;
 
-      langkah(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
-      langkah(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
+      langkah(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,currStandPoint,P1));
+      langkah(bukanTrajectory(P4,currStandPoint,P1), bukanTrajectory(P1,naik,P4));
 
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
 
-    void jalanTinggi(int dir){
-      vec3_t tinggi = {0,-40,0}; // Mengatur ketinggian dari langkah
+    void putar(float deg, int dir, int tipeLangkah){
+      vec3_t tinggi; // Mengatur ketinggian dari langkah
+      vec3_t currStandPoint; // Set current standpoint
 
-      vec3_t P1 = rotateMatrix(this->standPointTinggi, 12 * dir);
-      vec3_t P4 = rotateMatrix(this->standPointTinggi, -12 * dir);
+      if(tipeLangkah == NORMAL) {
+        tinggi = {0,-25,0};
+        currStandPoint = this->standPoint;
+      }
+      else {
+        tinggi = {0,-48,0};
+        currStandPoint = this->standPointTinggi;
+      }
 
-      // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
-      vec3_t naik = tinggi + this->standPointTinggi;
+      vec3_t P1 = rotateMatrix(currStandPoint, deg * dir);
+      vec3_t P4 = rotateMatrix(currStandPoint, (-deg) * dir);
 
-      langkahTinggi(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointTinggi,P1));
-      langkahTinggi(bukanTrajectory(P4,this->standPointTinggi,P1), bukanTrajectory(P1,naik,P4));
-
-      // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
-    }
-
-    void putar(float deg,int dir){
-      vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
-
-      vec3_t P1 = rotateMatrix(this->standPoint, deg * dir);
-      vec3_t P4 = rotateMatrix(this->standPoint, deg *-1 * dir);
-
-      vec3_t naik = tinggi + this->standPoint;
+      vec3_t naik = tinggi + currStandPoint;
       
-      langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
-      langkahPutar(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
-    }
-
-    void putarTinggi(float deg,int dir){
-      vec3_t tinggi = {0,-48,0}; // Mengatur ketinggian dari langkah
-
-      vec3_t P1 = rotateMatrix(this->standPointTinggi, deg * dir);
-      vec3_t P4 = rotateMatrix(this->standPointTinggi, deg *-1 * dir);
-
-      vec3_t naik = tinggi + this->standPointTinggi;
-      
-      langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointTinggi,P1));
-      langkahPutar(bukanTrajectory(P4,this->standPointTinggi,P1), bukanTrajectory(P1,naik,P4));
+      langkahPutar(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,currStandPoint,P1));
+      langkahPutar(bukanTrajectory(P4,currStandPoint,P1), bukanTrajectory(P1,naik,P4));
     }
 };

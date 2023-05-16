@@ -44,3 +44,8 @@
 
 #define ORANGE 1
 #define PUTIH 2
+
+#define NORMAL 0
+#define TINGGI 1
+
+#define DEFAULT 0
