@@ -101,11 +101,11 @@ class Kompas{
           compass.dmpGetGravity(&gravity, &q);
           compass.dmpGetYawPitchRoll(ypr, &q, &gravity);
           
-          Serial.print(ypr[0] * 180/M_PI);
+          Serial.print(ypr[0] * 180/M_PI + 180);
           Serial.print(", ");
-          Serial.print(ypr[1]  * 180/M_PI);
+          Serial.print(ypr[1]  * 180/M_PI + 180);
           Serial.print(", ");
-          Serial.println(ypr[2] * 180/M_PI);
+          Serial.println(ypr[2] * 180/M_PI + 180);
         }
 
         vec3_t getCurrent(){
@@ -114,7 +114,17 @@ class Kompas{
             compass.dmpGetQuaternion(&q, fifoBuffer);
             compass.dmpGetGravity(&gravity, &q);
             compass.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    
-            return {(ypr[0] * 180/M_PI), (ypr[1]  * 180/M_PI), (ypr[2] * 180/M_PI)};
+
+            // YAW
+            
+            if(ypr[0] <= -180) 
+              ypr[0] = (ypr[0] * 180 / M_PI) + 360;
+            else 
+              ypr[0] = (ypr[0] * 180 / M_PI) + 180; 
+
+            ypr[1] = (ypr[1] * 180 / M_PI); // PITCH
+            ypr[2] = (ypr[2] * 180 / M_PI); // ROLL
+
+            return {ypr[0], ypr[1], ypr[2]};
         }
 };

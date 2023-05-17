@@ -7,18 +7,19 @@ void setup(){
     ax12a.begin(BaudRate, DirectionPin, &Serial3); // inisialisasi AX12A
     Serial3.begin(1000000);
     Serial.begin(9600);
+
     KSR2023.init();
     delay(2000);
-
     KSR2023.checkPosition();
-    KSR2023.point1();
-    KSR2023.point2();
-    KSR2023.point3();
-    KSR2023.point4();
+    // KSR2023.point1();
+    // KSR2023.point2();
+    // KSR2023.point3();
+    // KSR2023.point4();
 }
 
 void loop(){
-  //KSR2023.kompas.printCurrent();
+  // KSR2023.kompas.printCurrent();
 
-  //KSR2023.jarak.printJarak();
+  // KSR2023.jarak.printJarak();
+  
 }

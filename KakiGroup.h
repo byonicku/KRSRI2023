@@ -112,7 +112,7 @@ class KakiGroup{
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
 
-    void putar(float deg, int dir, int tipeLangkah){
+    void putar(int dir, int tipeLangkah, float derajat, int height){
       vec3_t tinggi; // Mengatur ketinggian dari langkah
       vec3_t currStandPoint; // Set current standpoint
 
@@ -125,8 +125,11 @@ class KakiGroup{
         currStandPoint = this->standPointTinggi;
       }
 
-      vec3_t P1 = rotateMatrix(currStandPoint, deg * dir);
-      vec3_t P4 = rotateMatrix(currStandPoint, (-deg) * dir);
+      if(height > 0)
+        tinggi = {0, -height, 0};
+
+      vec3_t P1 = rotateMatrix(currStandPoint, derajat * dir);
+      vec3_t P4 = rotateMatrix(currStandPoint, (-derajat) * dir);
 
       vec3_t naik = tinggi + currStandPoint;
       
