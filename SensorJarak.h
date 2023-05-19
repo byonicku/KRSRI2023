@@ -38,7 +38,10 @@ class SensorJarak {
         average += buffer[i];
       
       average /= bufferSize;
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
       return average;
     }
 

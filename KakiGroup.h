@@ -85,6 +85,7 @@ class KakiGroup{
       //DEFAULT JALAN NORMAL DERAJAT 10
       //DEFAULT JALAN TINGGI DERAJAT 20
 
+<<<<<<< HEAD
       vec3_t tinggi; // Mengatur ketinggian dari langkah
       vec3_t currStandPoint; // Set current standpoint
       
@@ -102,6 +103,52 @@ class KakiGroup{
           
       vec3_t P1 = rotateMatrix(currStandPoint, derajat * dir);
       vec3_t P4 = rotateMatrix(currStandPoint, (-derajat) * dir);
+=======
+      // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
+      vec3_t naik = tinggi + this->standPoint;
+
+      langkah(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
+      langkah(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
+
+      // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
+    }
+
+    void jalanCustom(int dir, int sudut){
+      vec3_t tinggi = {0,-25,0}; // Mengatur ketinggian dari langkah
+
+      vec3_t P1 = rotateMatrix(this->standPoint, sudut * dir);
+      vec3_t P4 = rotateMatrix(this->standPoint, -1 * sudut* dir); 
+
+      // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
+      vec3_t naik = tinggi + this->standPoint;
+
+      langkah(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPoint,P1));
+      langkah(bukanTrajectory(P4,this->standPoint,P1), bukanTrajectory(P1,naik,P4));
+
+      // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
+    }
+
+    void jalanTinggi(int dir){
+      vec3_t tinggi = {0,-46,0}; // Mengatur ketinggian dari langkah
+
+      vec3_t P1 = rotateMatrix(this->standPointTinggi, 20 * dir);
+      vec3_t P4 = rotateMatrix(this->standPointTinggi, -20 * dir);
+
+      // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
+      vec3_t naik = tinggi + this->standPointTinggi;
+
+      langkahTinggi(bukanTrajectory(P1,naik,P4), bukanTrajectory(P4,this->standPointTinggi,P1));
+      langkahTinggi(bukanTrajectory(P4,this->standPointTinggi,P1), bukanTrajectory(P1,naik,P4));
+
+      // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
+    }
+
+    void jalanTinggiCustom(int dir, int heigth, int sudut){
+      vec3_t tinggi = {0,-1 * heigth,0}; // Mengatur ketinggian dari langkah
+
+      vec3_t P1 = rotateMatrix(this->standPointTinggi, sudut * dir);
+      vec3_t P4 = rotateMatrix(this->standPointTinggi, -1 * sudut * dir);
+>>>>>>> master
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
       vec3_t naik = tinggi + currStandPoint;
