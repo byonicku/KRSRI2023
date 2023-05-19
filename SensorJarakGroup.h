@@ -31,6 +31,16 @@ class SensorJarakGroup {
       return belakang.bacaJarak();
     }
 
+    void init(){
+      // Digunakan untuk mendapatkan 10 data awal sensor jarak sebagai patokan kedepannya
+      for(int i = 0 ; i < 10 ; i++){
+        jarakKanan();
+        jarakKiri();
+        jarakDepan();
+        jarakBelakang();
+      }
+    }
+
     void printJarak() {
       Serial.print(jarakKiri());
       Serial.print(", ");

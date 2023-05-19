@@ -52,7 +52,7 @@ int mapServo(int deg){
 }
 
 ArduinoQueue<vec3_t> trajectory(vec3_t P1,vec3_t P2,vec3_t P3,vec3_t P4, float t){
-    // Untuk trajectory
+    // TIDAK DIPAKAI LAGI
 
     ArduinoQueue<vec3_t> result(1/t + 3);
     float mult = t;
@@ -67,6 +67,7 @@ ArduinoQueue<vec3_t> trajectory(vec3_t P1,vec3_t P2,vec3_t P3,vec3_t P4, float t
 }
 
 ArduinoQueue<vec3_t> bukanTrajectory(vec3_t P1,vec3_t P2,vec3_t P3){
+    // Untuk trajectory manual
     ArduinoQueue<vec3_t> result(3);
     
     result.enqueue(P1);

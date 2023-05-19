@@ -62,13 +62,11 @@ class Kaki{
           pointMundur = rotateMatrix(pointMundur, -15 * this->pos);
         } 
 
-        if(this->grup == GRUP1){
-          moveToPoint(pointMaju);
-        }
-        else{
+        if(this->grup == GRUP1)
+          moveToPoint(pointMaju);        
+        else
           moveToPoint(pointMundur);
-        }
-
+        
         delayMicroseconds(10);
     }
 
