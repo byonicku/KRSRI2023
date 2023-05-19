@@ -114,7 +114,7 @@ class Robot{
         yaw[2] = yaw[3] - 90;
         yaw[1] = yaw[3] + 90;
 
-        setPos(0, DEFAULT, 0, 2, 12, NORMAL);
+        setPos(0, DEFAULT, 0, 2, 15, NORMAL);
       }
 <<<<<<< HEAD
       else if(jarak.jarakKiri() >= 390){ // Berarti lagi ngadep kanan
@@ -127,7 +127,7 @@ class Robot{
         yaw[0] = yaw[2] - 90;
         yaw[3] = yaw[2] + 90;
 
-        setPos(0, DEFAULT, 0, 2, 12, NORMAL);
+        setPos(0, DEFAULT, 0, 2, 15, NORMAL);
       }
       else if(jarak.jarakKanan() >= 390){ // Berarti lagi ngadep kiri
         yaw[1] = kompas.getCurrent().x; 
@@ -136,7 +136,7 @@ class Robot{
         yaw[3] = yaw[1] - 90;
         yaw[0] = yaw[1] + 90;
 
-        setPos(0, DEFAULT, 0, 2, 12, NORMAL);
+        setPos(0, DEFAULT, 0, 2, 15, NORMAL);
       }
 <<<<<<< HEAD
       else if(jarak.jarakDepan() >= 390){ // Ngadep depan
@@ -216,40 +216,17 @@ class Robot{
       //DEFAULT DERAJAT 3 NORMAL
       //DEFAULT DERAJAT 5 TINGGI
 
-      double simpan = kompas.getCurrent().x;
-      double simpanNext = simpan;
-      int putar = 0;
+      double simpan = 0;
 
       do{
-         simpanNext = kompas.getCurrent().x;
-          //Jika dari putaran kanan
-          if((simpan >= 270 && simpan <= 360) && (simpanNext >= 0 && simpanNext <= 90)){
-            putar++;
-          }
-          if((simpan >= 360 && simpan <= 450) && (simpanNext >= 270 && simpanNext <= 360)){
-            putar--;
-          }
-          //jika dari putaran kiri
-          if((simpanNext >= 270 && simpanNext <= 360) && (simpan >= 0 && simpan <= 90)){
-            putar--;
-          }
-          if((simpanNext >= 360 && simpanNext <= 450) && (simpan >= 270 && simpan <= 360)){
-            putar++;
-          }
-          //digunakan hanya jika dia lagi menuju ke yaw yang berada diperbatasan 360
-          if(yaw[index] >= 345 && yaw[index] <= 375){
-            simpanNext += putar * 360;
-            if(simpanNext < 90){
-              putar++;
-              simpanNext += putar * 360;
-            }
-          }
-          if(simpanNext < yaw[index] - error)
+          simpan = kompas.getCurrent().x;
+
+          if(simpan < yaw[index] - error)
               rotate(KANAN, height, 1, derajat, tipeLangkah);
-          if(simpanNext > yaw[index] + error)
+          if(simpan > yaw[index] + error)
               rotate(KIRI, height, 1, derajat, tipeLangkah);
           
-      }while(simpanNext < yaw[index] - error || simpanNext > yaw[index] + error);
+      }while(simpan < yaw[index] - error || simpan > yaw[index] + error);
     }
 
 <<<<<<< HEAD
@@ -276,34 +253,19 @@ class Robot{
       //DEFAULT DERAJAT 3 NORMAL
       //DEFAULT DERAJAT 5 TINGGI
       double simpan = kompas.getCurrent().x;
-      double simpanNext = simpan;
+      double simpanNext = 0;
       int putar = 0;
 
       do{
           simpanNext = kompas.getCurrent().x;
-          //Jika dari putaran kanan
+        
           if((simpan >= 270 && simpan <= 360) && (simpanNext >= 0 && simpanNext <= 90)){
             putar++;
           }
-          if((simpan >= 360 && simpan <= 450) && (simpanNext >= 270 && simpanNext <= 360)){
-            putar--;
-          }
-          //jika dari putaran kiri
-          if((simpanNext >= 270 && simpanNext <= 360) && (simpan >= 0 && simpan <= 90)){
-            putar--;
-          }
-          if((simpanNext >= 360 && simpanNext <= 450) && (simpan >= 270 && simpan <= 360)){
-            putar++;
-          }
-          //digunakan hanya jika dia lagi menuju ke yaw yang berada diperbatasan 360
-          if(yaw[index] >= 345 && yaw[index] <= 375){
-            simpanNext += putar * 360;
-            if(simpanNext < 90){
-              putar++;
-              simpanNext += putar * 360;
-            }
-          }
-          //Serial.println(simpanNext);
+          
+          simpanNext += putar * 360;
+
+          Serial.println(simpanNext);
 
           if(simpanNext < yaw[index] - error + set)
               rotate(KANAN, height, 1, derajat, tipeLangkah);
@@ -325,17 +287,21 @@ class Robot{
       // Langkah ke depan korban 1
       while(1){
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         if(jarak.jarakBelakang() >= 400)
             break;
 
 >>>>>>> master
+=======
+        if(jarak.jarakBelakang() >= 400)
+            break;
+
+>>>>>>> parent of a106db9 (fixPos & some fixing setPos correction)
         if(langkah % 3 == 0 && langkah != 0)
           fixPos(0, DEFAULT, 2, 3, NORMAL);
         
         move(MAJU, DEFAULT, 10, NORMAL);
-        if(jarak.jarakBelakang() >= 450)
-            break;
         langkah++;
       }
       
@@ -366,11 +332,15 @@ class Robot{
       langkah = 0;
       while(1) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         if(jarak.jarakBelakang() <= 230)
 =======
         
         if(jarak.jarakBelakang() <= 410)
 >>>>>>> master
+=======
+        if(jarak.jarakBelakang() <= 410)
+>>>>>>> parent of a106db9 (fixPos & some fixing setPos correction)
             break;
 
         if(langkah % 3 == 0 && langkah != 0)
@@ -395,10 +365,14 @@ class Robot{
 
       while(1){
 <<<<<<< HEAD
+<<<<<<< HEAD
         if(jarak.jarakBelakang() >= 450)
 =======
         if(jarak.jarakBelakang() >= 430)
 >>>>>>> master
+=======
+        if(jarak.jarakBelakang() >= 430)
+>>>>>>> parent of a106db9 (fixPos & some fixing setPos correction)
             break;
 
         if(langkah % 3 == 0 && langkah != 0)
@@ -425,13 +399,14 @@ class Robot{
       delayMicroseconds(100);
 
       while(1){
-        if(kompas.getCurrent().z < -14)
+        if(kompas.getCurrent().z < -13.5)
             break;
 <<<<<<< HEAD
 
         if(langkah % 3 == 0 && langkah != 0)
             fixPos(0, 45, 15, 3.5, TINGGI);
         
+<<<<<<< HEAD
         move(MAJU, 45, 20, TINGGI);
 =======
         if(langkah % 3 == 0 && langkah != 0){
@@ -440,6 +415,9 @@ class Robot{
         
         majuTinggiCustom(45, 17);
 >>>>>>> master
+=======
+        move(MAJU, 45, 17, TINGGI);
+>>>>>>> parent of a106db9 (fixPos & some fixing setPos correction)
         langkah++;
       }
 
@@ -468,11 +446,13 @@ class Robot{
 
       while(1) {
         if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0, 40, 8, 3.5, TINGGI);
-          if(jarak.jarakDepan() <= 200) 
+          fixPos(0, 40, 5, 3.5, TINGGI);
+          
+          if(jarak.jarakDepan() <= 180) 
             break;
         }
         
+<<<<<<< HEAD
         move(MAJU, 40, 8, TINGGI);
 =======
       berdiriTinggi();
@@ -503,6 +483,9 @@ class Robot{
         
         majuTinggiCustom(40, 5);
 >>>>>>> master
+=======
+        move(MAJU, 40, 5, TINGGI);
+>>>>>>> parent of a106db9 (fixPos & some fixing setPos correction)
         langkah++;
       }
     
@@ -522,6 +505,7 @@ class Robot{
       capit.tutupCapit();
       
 <<<<<<< HEAD
+<<<<<<< HEAD
       setPos(0, DEFAULT, 0, 3.5, 5, TINGGI);
       while(1) {
         if(langkah % 3 == 0 && langkah != 0){
@@ -537,6 +521,9 @@ class Robot{
 =======
       setPosTinggi(1, 0);
 >>>>>>> master
+=======
+      setPos(1, DEFAULT, 0, 3.5, 5, TINGGI);
+>>>>>>> parent of a106db9 (fixPos & some fixing setPos correction)
     }
 
     void point4(){
@@ -550,7 +537,7 @@ class Robot{
 <<<<<<< HEAD
           fixPos(0, 40, 5, 3.5, TINGGI);
 
-          if(jarak.jarakBelakang() >= 460)
+          if(jarak.jarakDepan() <= 200)
             break;
         }
         

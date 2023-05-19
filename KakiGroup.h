@@ -11,7 +11,7 @@ class KakiGroup{
     Kaki RM; // Kanan Tengah
     Kaki RB; // Kanan Belakang
     vec3_t standPoint; // Titik Berdiri Semut
-    vec3_t standPointTinggi; // Titik berdiri tinggi
+    vec3_t standPointTinggi; // Titik berdiri cuma untuk jalan nendang
 
   public:
     KakiGroup(){
