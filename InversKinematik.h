@@ -72,7 +72,7 @@ void cariStandpoint(){
            * Gunakan relasi y dan z berupa y = 90 - z untuk mencari standPoint
            * Contoh: y = 30 & z = 60
           */
-          if((deggs.y > 10 && deggs.y < 80) && deggs.x == 0 && (deggs.z > (90 - deggs.y - 2) && deggs.z < (90 - deggs.y + 2))){
+          if((deggs.y > 24 && deggs.y < 26) && deggs.x == 0 && (deggs.z > (90 - deggs.y - 2) && deggs.z < (90 - deggs.y + 2))){
             Serial.print("TEST "); Serial.println(i); Serial.print(" i: "); Serial.print(i); Serial.print(" j: "); Serial.print(j); Serial.println();          
             Serial.println();
             Serial.print(deggs.x);

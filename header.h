@@ -45,12 +45,13 @@
 #define ORANGE 1
 #define PUTIH 2
 
+#define nStandPoint 6
+
 #define NORMAL 0
 #define SEDANG_10 1
 #define SEDANG_15 2
 #define SEDANG_20 3
-#define TINGGI 4
+#define SEDANG_25 4
+#define TINGGI 5
 
 #define DEFAULT 0
-
-#define nStandPoint 5

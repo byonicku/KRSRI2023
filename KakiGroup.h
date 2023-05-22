@@ -14,6 +14,7 @@ class KakiGroup{
           {0, -33, 36}, // 10-80
           {0, -29, 35}, //15-75
           {0, -25, 34}, //20-70
+          {0,-20, 32}, //25-65
           {0,-18, 32}  //Tinggi 30 - 60
         }; //Array titik berdiri 
     vec3_t tinggi[nStandPoint] = {
@@ -21,6 +22,7 @@ class KakiGroup{
           {0,-30,-8},  // 10-80
           {0,-35,-8},  //15-75
           {0,-40,-8},  //20-70
+          {0,-45,-4}, //25-65
           {0,-45,-3}  //Tinggi 30 - 60
       }; //Array tinggi default utk tiap StandPoint
 

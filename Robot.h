@@ -115,7 +115,7 @@ class Robot{
        Serial.println(yaw[3]);
     }
     
-    void getKorban(int height, float derajat, int tipeLangkah){
+    void getKorban(int height, float derajat, int tipeLangkah, int speed = 10){
       //USE " DEFAULT " JIKA TIDAK MAU SPECIFY HEIGHT
       //DEFAULT DERAJAT 10 NORMAL
       //DEFAULT DERAJAT 20 TINGGI
@@ -133,11 +133,11 @@ class Robot{
         Y = kamera.getY();
 
         if(X >= 0 && X <= 125)
-          rotate(KANAN, height, 1, 4, tipeLangkah);
+          rotate(KANAN, height, 1, 4, tipeLangkah, speed);
         else if (X >= 175)
-          rotate(KIRI, height, 1, 3, tipeLangkah);
+          rotate(KIRI, height, 1, 3, tipeLangkah, speed);
         else
-          move(MAJU, height, derajat, tipeLangkah);
+          move(MAJU, height, derajat, tipeLangkah, speed);
 
         W = kamera.getWidth();
         H = kamera.getHeight();
@@ -150,7 +150,7 @@ class Robot{
       berdiri(TINGGI);
       capit.naikLenganDikit();
       for(int i = 0; i < 2; i++){
-        move(MUNDUR, height, derajat, tipeLangkah);
+        move(MUNDUR, height, derajat, tipeLangkah, speed);
       }
       delay(50);
       capit.naikLenganLanjutan();
@@ -260,7 +260,7 @@ class Robot{
       berdiri(NORMAL);
 
       // Putar arah korban (KIRI)
-      setPos(1, DEFAULT, 0, 2, 8, NORMAL);
+      setPos(1, DEFAULT, 0, 3, 8, NORMAL);
 
       berdiri(NORMAL);
 
@@ -291,7 +291,7 @@ class Robot{
       berdiri(NORMAL);
 
       // Putar kanan dan luruskan (ke depan)
-      setPos(0, DEFAULT, 0, 2, 8, NORMAL);
+      setPos(0, DEFAULT, 0, 3, 8, NORMAL);
 
       langkah = 0;
       while(1){
@@ -311,16 +311,16 @@ class Robot{
     void point2(){
       int langkah = 0;
 
-      berdiri(TINGGI);
+      berdiri(SEDANG_25);
 
       while(1){
         if(kompas.getCurrent().z < -14)
             break;
 
         if(langkah % 3 == 0 && langkah != 0)
-            fixPos(0, DEFAULT, 8, 12, TINGGI, 150);
+            fixPos(0, DEFAULT, 8, 12, SEDANG_25, 150);
         
-        move(MAJU, DEFAULT, 18, TINGGI, 150);
+        move(MAJU, DEFAULT, 18, SEDANG_25, 150);
         langkah++;
       }
       
@@ -368,87 +368,95 @@ class Robot{
       capit.naikLengan();
       capit.tutupCapit();
       
-       //menuju ke depan daerah kelereng
+      //menuju ke depan daerah kelereng
+      //hadap kiri
+      setPos(1, DEFAULT, 0, 3.5, 8, SEDANG_15, 60);
+      //maju sampai mentok
       langkah = 0;
       while(1) {
         if(langkah % 3 == 0 && langkah != 0){
           fixPos(0, DEFAULT, 2, 3, SEDANG_15, 60);
-          if(jarak.jarakBelakang() <= 100) 
-            break;
-        }
-        
-        move(MUNDUR, DEFAULT, 8, SEDANG_15, 60);
-        langkah++;
-      }
-      
-      //hadap ke depan
-      setPos(0, DEFAULT, 0, 3.5, 8, SEDANG_15, 60);
-      langkah = 0;
-      while(1) {
-        if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0, DEFAULT, 3.5, 8, SEDANG_15, 60);
-          if(jarak.jarakDepan() <= 50) 
+          if(jarak.jarakBelakang() >= 170) 
             break;
         }
         
         move(MAJU, DEFAULT, 8, SEDANG_15, 60);
         langkah++;
       }
+      if(jarak.jarakKanan() > 110){
+        //hadap depan
+        setPos(0, DEFAULT, 0, 3.5, 10, SEDANG_15, 60);
+        //maju sampai mentok
+        langkah = 0;
+        while(1) {
+          if(langkah % 3 == 0 && langkah != 0){
+            fixPos(0, DEFAULT, 2, 3, SEDANG_15, 60);
+            if(jarak.jarakDepan() <= 80) 
+              break;
+          }
+          
+          move(MAJU, DEFAULT, 8, SEDANG_15, 60);
+          langkah++;
+        }
+      }
       //hadap ke kiri
       setPos(1, DEFAULT, 0, 3.5, 8, SEDANG_15, 60);
     }
 
     void point4(){
-      berdiri(TINGGI);
+      berdiri(SEDANG_20);
 
       int langkah = 0;
 
       while(1) {
         if(langkah % 3 == 0 && langkah != 0){
-          fixPos(1, 40, 3.5, 5, TINGGI, 80);
-
-          if(jarak.jarakBelakang() >= 400)
-            break;
+          fixPos(1, DEFAULT, 5, 12, SEDANG_20, 50);
         }
+        if(jarak.jarakBelakang() >= 440 && jarak.jarakDepan() >= 440)
+            break;
         
-        move(MAJU, 40, 15, TINGGI, 80);
+        move(MAJU, DEFAULT, 15, SEDANG_20, 50);
         langkah++;
       }
 
       //hadap ke korban (belakang)
-      setPos(3, 40, 0, 2, 15, TINGGI, 80);
+      setPos(3, DEFAULT, 0, 3.5, 18, SEDANG_20, 50);
 
-      berdiri(TINGGI);
+      berdiri(SEDANG_20);
 
       getKorban(DEFAULT, 10, NORMAL);
 
-      berdiri(TINGGI);
+      berdiri(SEDANG_20);
       
       //hadap ke kiri 
-      setPos(1, 40, 0, 3.5, 15, TINGGI, 80);
+      setPos(1, DEFAULT, 0, 3.5, 12, SEDANG_20, 50);
 
       langkah = 0;
-
       while(1) {
         if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0, 40, 8, 3.5, TINGGI, 80);
-          if(jarak.jarakDepan() <= 200) 
+          fixPos(0, DEFAULT, 3.5, 8, TINGGI, 50);
+          if(jarak.jarakDepan() <= 300) 
             break;
         }
         
-        move(MAJU, 40, 8, TINGGI, 80);
+        move(MAJU, DEFAULT, 12, SEDANG_20, 50);
         langkah++;
       }
-      //hadap 25 derajat miring dari kiri
-      setPos(1, 40, 35, 3.5, 8, TINGGI, 80);
+      //hadap 65 derajat miring dari kiri
+      setPos(1, DEFAULT, 65, 3.5, 8, TINGGI, 50);
 
-      berdiri(TINGGI);
+      berdiri(NORMAL);
       
       capit.turunLengan(); 
       capit.bukaCapit();
+      for(int i = 0; i < 2; i++){
+          move(MUNDUR, 40, 8, SEDANG_20, 50);
+        }
       capit.naikLengan();
       capit.tutupCapit();
 
-      setPos(3, 40, 0, 3.5, 15, TINGGI, 80);
+      berdiri(SEDANG_20);
+
+      setPos(3, DEFAULT, 0, 3.5, 10, SEDANG_20, 50);
     }
 };
