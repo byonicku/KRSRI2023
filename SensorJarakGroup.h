@@ -9,10 +9,10 @@ class SensorJarakGroup {
 
   public:
     SensorJarakGroup() :
-      depan(7, 6, 10),
-      belakang(13, 12, 10),
-      kiri(8, 9, 10),
-      kanan(11, 10, 10)
+      depan(7, 6),
+      belakang(13, 12),
+      kiri(8, 9),
+      kanan(11, 10)
     {}
 
     int jarakKiri() {
@@ -32,12 +32,16 @@ class SensorJarakGroup {
     }
 
     void printJarak() {
+      Serial.print("Kiri: ");
       Serial.print(jarakKiri());
       Serial.print(", ");
+      Serial.print("Kanan: ");
       Serial.print(jarakKanan());
       Serial.print(", ");
+      Serial.print("Belakang: ");
       Serial.print(jarakBelakang());
       Serial.print(", ");
+      Serial.print("Depan: ");
       Serial.println(jarakDepan());
     }
 };

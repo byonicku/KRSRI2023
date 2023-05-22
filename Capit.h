@@ -10,9 +10,7 @@ class Capit{
     Servo capitan;
 
   public:
-    Capit(){
-        
-    }
+    Capit(){}
     
     // Inisialisasi capit langsung ke point awal (atas) dari capit
     void init(){
@@ -23,18 +21,20 @@ class Capit{
 
       lengan.write(0);
       capitan.write(0);
-      delay(50);
+      delay(200);
 
       // Bagian atas untuk mengset langsung servo ke posisi awal
     }
 
     void tutupCapit(){
       capitan.write(0);
+      delay(200);
       // Menutup Capit dengan sudut 0 derajat
     }
 
     void bukaCapit(){
       capitan.write(60);
+      delay(200);
       // Membuka Capit dengan sudut 60 derajat
     }
 
@@ -47,7 +47,7 @@ class Capit{
     }
 
      void naikLenganDikit(){ 
-      for(int pos = 140 ; pos >= 120 ; pos -= 5){
+      for(int pos = 140 ; pos >= 110 ; pos -= 5){
           lengan.write(pos);
           delay(65);
       }
@@ -55,7 +55,7 @@ class Capit{
     }
 
     void naikLenganLanjutan(){
-      for(int pos = 120 ; pos >= 0 ; pos -= 5){
+      for(int pos = 110 ; pos >= 0 ; pos -= 5){
           lengan.write(pos);
           delay(65);
       }

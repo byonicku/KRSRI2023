@@ -3,9 +3,7 @@ class Kamera{
         Pixy2 pixy;
 
     public:
-        Kamera(){
-            
-        }
+        Kamera(){}
         
         void init(){
             // Inisialiasai kamera

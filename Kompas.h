@@ -24,9 +24,7 @@ class Kompas{
         float ypr[3];
 
     public:
-        Kompas(){
-             
-        }
+        Kompas(){}
 
         void init(){
             // Untuk menginisialisasi Kompas
@@ -46,12 +44,8 @@ class Kompas{
 
             compass.CalibrateGyro(6);
             compass.setZAccelOffset(1788);
-
-          
-
-            devStatus = compass.dmpInitialize();
-
             
+            devStatus = compass.dmpInitialize();
 
             if (devStatus == 0) {
                 compass.CalibrateAccel(6);
@@ -115,13 +109,9 @@ class Kompas{
             compass.dmpGetGravity(&gravity, &q);
             compass.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
-            // YAW
-            
-            if(ypr[0] <= -180) 
-              ypr[0] = (ypr[0] * 180 / M_PI) + 360;
-            else 
-              ypr[0] = (ypr[0] * 180 / M_PI) + 180; 
-
+            // YAW dikonversi ke sistem +360
+            ypr[0] = (ypr[0] * 180 / M_PI) + 180; 
+            //pitch dan roll tetap basis +180 s/d -180
             ypr[1] = (ypr[1] * 180 / M_PI); // PITCH
             ypr[2] = (ypr[2] * 180 / M_PI); // ROLL
 

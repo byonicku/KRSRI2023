@@ -23,7 +23,7 @@ class Sweeper{
             delay(10);
             kiri.write(160);
             kanan.write(20);
-            delay(50);
+            delay(200);
 
             // Bagian atas untuk mengset langsung servo ke posisi awal
         }

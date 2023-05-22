@@ -46,6 +46,11 @@
 #define PUTIH 2
 
 #define NORMAL 0
-#define TINGGI 1
+#define SEDANG_10 1
+#define SEDANG_15 2
+#define SEDANG_20 3
+#define TINGGI 4
 
 #define DEFAULT 0
+
+#define nStandPoint 5
