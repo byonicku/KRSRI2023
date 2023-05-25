@@ -16,21 +16,38 @@ class SensorJarakGroup {
     {}
 
     int jarakKiri() {
-      return kiri.bacaJarak();
+      return kiri.jarak;
     }
     
     int jarakKanan() {
-      return kanan.bacaJarak();
+      return kanan.jarak;
     }
 
     int jarakDepan() {
-      return depan.bacaJarak();
+      return depan.jarak;
     }
 
     int jarakBelakang() {
-      return belakang.bacaJarak();
+      return belakang.jarak;
     }
 
+    void readAllJarak(){
+      depan.resetTrigger();
+      belakang.resetTrigger();
+      kiri.resetTrigger();
+      kanan.resetTrigger();
+      delayMicroseconds(2);
+      depan.highTrigger();
+      belakang.highTrigger();
+      kiri.highTrigger();
+      kanan.highTrigger();
+      delayMicroseconds(10);
+      depan.bacaJarak();
+      belakang.bacaJarak();
+      kiri.bacaJarak();
+      kanan.bacaJarak();
+    }
+    
     void printJarak() {
       Serial.print("Kiri: ");
       Serial.print(jarakKiri());

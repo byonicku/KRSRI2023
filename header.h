@@ -35,6 +35,17 @@
 #define KANAN 1
 #define KIRI -1
 
+#define STAY 0 
+#define MOVING 1
+#define ROTATING 2
+
+//Arah robot
+#define FRONT 0
+#define LEFT 1
+#define RIGHT 2
+#define BACK 3
+
+//PART ROBOT
 #define GRUP1 1
 #define GRUP2 -1
 
@@ -42,9 +53,11 @@
 #define TENGAH 2
 #define BELAKANG 3
 
+//Keycolor kamera
 #define ORANGE 1
 #define PUTIH 2
 
+//StandPoint Robot
 #define nStandPoint 6
 
 #define NORMAL 0
@@ -55,3 +68,5 @@
 #define TINGGI 5
 
 #define DEFAULT 0
+
+#define MANUALMODE 123

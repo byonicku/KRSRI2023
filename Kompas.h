@@ -94,12 +94,14 @@ class Kompas{
           compass.dmpGetQuaternion(&q, fifoBuffer);
           compass.dmpGetGravity(&gravity, &q);
           compass.dmpGetYawPitchRoll(ypr, &q, &gravity);
-          
+          Serial.print("Yaw: ");
           Serial.print(ypr[0] * 180/M_PI + 180);
-          Serial.print(", ");
-          Serial.print(ypr[1]  * 180/M_PI + 180);
-          Serial.print(", ");
-          Serial.println(ypr[2] * 180/M_PI + 180);
+          Serial.print(",");
+          Serial.print("Pitch: ");
+          Serial.print(ypr[1]  * 180/M_PI);
+          Serial.print(",");
+          Serial.print("Roll: ");
+          Serial.println(ypr[2] * 180/M_PI);
         }
 
         vec3_t getCurrent(){

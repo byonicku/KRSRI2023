@@ -7,26 +7,87 @@
 #include "Kompas.h"
 
 class Robot{
-  public:
+  private:
     KakiGroup kaki;
     SensorJarakGroup jarak;
     Kamera kamera;
     Sweeper sweeper;
     Capit capit;
     Kompas kompas;
+  public:
+    //parameter robot
+    int tipeLangkah = NORMAL;
+    float derajatLangkah = 10;
+    float derajatLangkahSetPos = 3;
+    int height = DEFAULT;
+    int direction = FRONT;
+    int offsetDirection = 0;
+    int movingType = STAY; //jenis gerakan lagi diam, gerak maju mundur, atau mutar
+    int movingDirection = STAY; //arah gerakan MAJU-MUNDUR-KIRI-KANAN
+    float error = 3.0;
+    int speed = 10;
+    bool isHoldingKorban = false;
+    int kondisiTargetJarakMin[4] = {0,0,0,0}; //kondisi target dari ke-4 jarak, jika 0 abaikan
+    int kondisiTargetJarakMax[4] = {0,0,0,0}; 
+    int kondisiTargetRollMin = 0; //kondisi target dari roll, jika 0 abaikan
+    int kondisiTargetRollMax = 0;
+    int state = MANUALMODE;
     /*
-        yaw[0] -> depan
-        yaw[1] -> kiri
-        yaw[2] -> kanan
-        yaw[3] -> belakang
-      */
-     double yaw[4] = {0, 0, 0, 0}; // simpan lokasi arah robot menggunakan kompas
-
+     * yaw[0] -> depan
+     * yaw[1] -> kiri
+     * yaw[2] -> kanan
+     * yaw[3] -> belakang
+     */
+    double yaw[4] = {0, 0, 0, 0}; // simpan lokasi arah robot menggunakan kompas
+    
     Robot(){}
 
+    void printState(){
+      Serial.print("S: "); 
+      Serial.print(state);
+      Serial.print(" TL: "); 
+      Serial.print(tipeLangkah);
+      Serial.print(" DL: "); 
+      Serial.print(derajatLangkah);
+      Serial.print(" H: "); 
+      Serial.print(height);
+      Serial.print(" Arah: "); 
+      Serial.print(direction);
+      Serial.print(" Offset: "); 
+      Serial.print(offsetDirection);
+      Serial.print(" MT: "); 
+      Serial.print(movingType);
+      Serial.print(" MD: "); 
+      Serial.print(movingDirection);
+      Serial.print(" E: "); 
+      Serial.print(error);
+      Serial.print(" Speed: "); 
+      Serial.print(speed);
+      Serial.print(" korban: "); 
+      Serial.print(isHoldingKorban);
+      Serial.print(" MinU: "); 
+      for(int i = 0; i < 4; i++){
+        Serial.print(kondisiTargetJarakMin[i]);
+        Serial.print(',');
+      }
+      Serial.print(" MaxU:  "); 
+      for(int i = 0; i < 4; i++){
+        Serial.print(kondisiTargetJarakMax[i]);
+        Serial.print(',');
+      }
+      Serial.print(" MinR: "); 
+      Serial.print(kondisiTargetRollMin);
+      Serial.print(" MaxR: "); 
+      Serial.println(kondisiTargetRollMax);
+      cetakYaw();
+      Serial.println("------------------------------");
+    }
+    
     void init(){
         kaki = KakiGroup();
         jarak = SensorJarakGroup();
+
+        for(int i = 1 ; i <= 5 ; i++) jarak.readAllJarak();// ADD BUFFER KE JARAK
 
         kamera.init();
         kompas.init();
@@ -35,18 +96,73 @@ class Robot{
         kaki.berdiri(NORMAL);
     }
 
-    //Untuk keperluan testing StandPoint
-    void berdiriDebug(vec3_t standPoint){
-        kaki.berdiriDebug(standPoint);
-    }
-    //Untuk keperluan testing StandPoint
-    void moveDebug(int action, vec3_t tinggi, float derajat, vec3_t standPoint, int speed = 10){
-      //USE DEFAULT UNTUK HEIGHT BILA TIDAK MAU SPECIFY
-      kaki.jalanDebug(action, standPoint, derajat, tinggi, speed);
+    void initManualMode(){
+      yaw[FRONT] = getYaw();
+        
+      yaw[BACK] = yaw[FRONT] + 180;
+      yaw[LEFT] = yaw[FRONT] - 90;
+      yaw[RIGHT] = yaw[FRONT] + 90;
+     }
+
+    void berdiri(){
+        berdiri(this->tipeLangkah);
     }
     
     void berdiri(int tipeLangkah){
         kaki.berdiri(tipeLangkah);
+        //reset state
+        this-> movingType = STAY;
+        this-> movingDirection = STAY;
+        for(int i = 0; i < 4; i++){
+          this->kondisiTargetJarakMin[i] = 0;
+          this->kondisiTargetJarakMax[i] = 0;
+        }
+        this->kondisiTargetRollMin = 0;
+        this->kondisiTargetRollMax = 0;
+    }
+    
+    void maju(){
+      move(MAJU, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+    }
+
+    void mundur(){
+      move(MUNDUR, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+    }
+
+    void move(){
+      switch(this->movingType){
+        case MOVING:{
+          switch(this->movingDirection){
+            case MAJU:{
+              maju();
+              break;
+            }
+            case MUNDUR:{
+              mundur();
+              break;
+            }
+          }
+          break;
+        }
+        case ROTATING:{
+          switch(this->movingDirection){
+            case KIRI:{
+              kiri();
+              break;
+            }
+            case KANAN:{
+              kanan();
+              break;
+            }
+            case STAY:{
+              if(this->offsetDirection != 0){
+                rotateToOffSet();
+              }
+            }
+          }
+          break;
+        }
+      }
     }
     
     void move(int action, int height, float derajat, int tipeLangkah, int speed = 10){
@@ -56,63 +172,110 @@ class Robot{
     
     void rotate(int action, int height, int step, float derajat, int tipeLangkah, int speed = 10){
       //DEFAULT DERAJAT (15 KIRI) (16 KANAN) 5 STEP
-      for(int i = 1 ; i <= step ; i++){
+      for(int i = 0 ; i < step ; i++){
+          
           kaki.putar(action, tipeLangkah, derajat, height, speed);
+          Serial.print("Rotasi 1: ");
+          printCurrentYPR();
       }
     }
 
+    //Arahkan robot ke depan, dan inisialisai value Yaw
     void checkPosition(){
-      // BUGGY BISA DI COBA DULU TES KARENA SENSOR JARAK UPDATE CODE JADI PERLU DI CEK ULANG
-      
       // kalo depan kosong -> (jarak jauh) langsung skip sekuens ini
       // kalo kanan kosong -> putar kanan
       // kalo kiri kosong -> putar kiri
       // kalo belakang kosong -> putar balik dari kiri / kanan sama aja
 
-      if(jarak.jarakBelakang() >= 390){ // Berarti lagi ngadep belakang
-        yaw[3] = kompas.getCurrent().x;
+      if(jarak.jarakBelakang() >= 350){ // Berarti lagi ngadep belakang
+        yaw[BACK] = getYaw();
         
-        yaw[0] = yaw[3] + 180;
-        yaw[2] = yaw[3] - 90;
-        yaw[1] = yaw[3] + 90;
+        yaw[FRONT] = yaw[BACK] + 180;
+        yaw[RIGHT] = yaw[BACK] - 90;
+        yaw[LEFT] = yaw[BACK] + 90;
 
-        setPos(0, DEFAULT, 0, 2, 12, NORMAL);
+        setPos(DEFAULT, DEFAULT, DEFAULT, DEFAULT,this->derajatLangkah, DEFAULT);
       }
-      else if(jarak.jarakKiri() >= 390){ // Berarti lagi ngadep kanan
-        yaw[2] = kompas.getCurrent().x; 
+      else if(jarak.jarakKiri() >= 350){ // Berarti lagi ngadep kanan
+        yaw[RIGHT] = getYaw();
         
-        yaw[1] = yaw[2] + 180;
-        yaw[0] = yaw[2] - 90;
-        yaw[3] = yaw[2] + 90;
+        yaw[LEFT] = yaw[RIGHT] + 180;
+        yaw[FRONT] = yaw[RIGHT] - 90;
+        yaw[BACK] = yaw[RIGHT] + 90;
 
-        setPos(0, DEFAULT, 0, 2, 12, NORMAL);
+        setPos(DEFAULT, DEFAULT, DEFAULT, DEFAULT,this->derajatLangkah, DEFAULT);
       }
-      else if(jarak.jarakKanan() >= 390){ // Berarti lagi ngadep kiri
-        yaw[1] = kompas.getCurrent().x; 
+      else if(jarak.jarakKanan() >= 350){ // Berarti lagi ngadep kiri
+        yaw[LEFT] = getYaw();
         
-        yaw[2] = yaw[1] + 180;
-        yaw[3] = yaw[1] - 90;
-        yaw[0] = yaw[1] + 90;
+        yaw[RIGHT] = yaw[LEFT] + 180;
+        yaw[BACK] = yaw[LEFT] - 90;
+        yaw[FRONT] = yaw[LEFT] + 90;
 
-        setPos(0, DEFAULT, 0, 2, 12, NORMAL);
+        setPos(DEFAULT, DEFAULT, DEFAULT, DEFAULT,this->derajatLangkah, DEFAULT);
       }
-      else if(jarak.jarakDepan() >= 390){ // Ngadep depan
-        yaw[0] = kompas.getCurrent().x;
+      else if(jarak.jarakDepan() >= 350){ // Ngadep depan
+        yaw[FRONT] = getYaw();
         
-        yaw[3] = yaw[0] + 180;
-        yaw[1] = yaw[0] - 90;
-        yaw[2] = yaw[0] + 90;
+        yaw[BACK] = yaw[FRONT] + 180;
+        yaw[LEFT] = yaw[FRONT] - 90;
+        yaw[RIGHT] = yaw[FRONT] + 90;
       }
+      state++;
     }
 
+    //Cetak value yaw dari robot 
     void cetakYaw(){
-       Serial.print(yaw[0]);
+       Serial.print("Yaw Value: ");
+       Serial.print("F ");
+       Serial.print(yaw[0]); //depan
        Serial.print(", ");
-       Serial.print(yaw[1]);
+       Serial.print("L ");
+       Serial.print(yaw[1]); //kiri
        Serial.print(", ");
-       Serial.print(yaw[2]);
+       Serial.print("R ");
+       Serial.print(yaw[2]); //kanan
        Serial.print(", ");
-       Serial.println(yaw[3]);
+       Serial.print("B ");
+       Serial.println(yaw[3]); //belakang
+    }
+
+    int getYaw(){
+      return kompas.getCurrent().x;
+    }
+
+    int getPitch(){
+      return kompas.getCurrent().y;
+    }
+
+    int getRoll(){
+      return kompas.getCurrent().z;
+    }
+    
+    int jarakDepan(){
+      return jarak.jarakDepan();
+    }
+
+    int jarakBelakang(){
+      return jarak.jarakBelakang();
+    }
+
+    int jarakKiri(){
+      return jarak.jarakKiri();
+    }
+
+    int jarakKanan(){
+      return jarak.jarakKanan();
+    }
+    
+    //Untuk mengupdate buffer
+    void readUltrasonic(){
+      jarak.readAllJarak();
+    }
+
+    void getKorban(){
+      getKorban(DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+      this->isHoldingKorban = true;
     }
     
     void getKorban(int height, float derajat, int tipeLangkah, int speed = 10){
@@ -147,28 +310,106 @@ class Robot{
       berdiri(NORMAL);
       delay(500);
       capit.tutupCapit();
-      berdiri(TINGGI);
+      berdiri(tipeLangkah);
       capit.naikLenganDikit();
       for(int i = 0; i < 2; i++){
         move(MUNDUR, height, derajat, tipeLangkah, speed);
       }
       delay(50);
       capit.naikLenganLanjutan();
+      state++;
+    }
+    void letakanKorban(){
+      capit.turunLengan();
+      capit.bukaCapit();
+      for(int i = 0; i < 2; i++){
+          move(MUNDUR, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+      }
+      capit.naikLengan();
+      capit.tutupCapit();
+      this->isHoldingKorban = false;
+      state++;
     }
 
-    void fixPos(int index, int height, int error, float derajat, int tipeLangkah, int speed = 10){
-      //DEFAULT ERROR 2 NORMAL
-      //DEFAULT ERROR 3.5 TINGGI
+    void rotateToOffSet(){
+      setPos();
+      berdiri();
+      state++;
+    }
+    
+    void kiri(){
+      rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+      switch(this->direction){
+        case FRONT:{
+          this->direction = LEFT;
+          break;
+        }
+        case LEFT:{
+          this->direction = BACK;
+          break;
+        }
+        case RIGHT:{
+          this->direction = FRONT;
+          break;
+        }
+        case BACK:{
+          this->direction = BACK;
+          break;
+        }
+      }
+      berdiri();
+      state++;
+    }
 
-      //DEFAULT DERAJAT 3 NORMAL
-      //DEFAULT DERAJAT 5 TINGGI
-
-      double simpan = kompas.getCurrent().x;
-      double simpanNext = simpan;
+    void kanan(){
+      rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+      switch(this->direction){
+        case FRONT:{
+          this->direction = RIGHT;
+          break;
+        }
+        case LEFT:{
+          this->direction = FRONT;
+          break;
+        }
+        case RIGHT:{
+          this->direction = BACK;
+          break;
+        }
+        case BACK:{
+          this->direction = LEFT;
+          break;
+        }
+      }
+      berdiri();
+      state++;
+    }
+    
+    void setPos(){
+      setPos(this->direction, DEFAULT, this->offsetDirection, this->error,this->derajatLangkahSetPos, this->tipeLangkah, this->speed);
+    }
+    /*
+     * Untuk rotasi sesuai arah atau penyearah robot sesuai kompas
+     * Set DEFAULT utk index, height, set, error, tipelangkah jika tidak dicustom
+     * Default VALUE
+     * index = 0 Depan
+     * height -> tinggi default sesuai tipeLangkah
+     * set 0
+     * error = 2
+     * tipeLangkah -> NORMAL
+     * Speed = 10, tidak perlu diberi value jika tidak ingin diubah
+     */
+    void setPos(int index, int height, int set, int error,float derajat, int tipeLangkah, int speed = 10){
+      
+      //DEFAULT value utk error
+      if(error == 0) error = 2;
+      
+      int simpan = getYaw();
+      int simpanNext = simpan;
       int putar = 0;
 
-      do{
-         simpanNext = kompas.getCurrent().x;
+      while(simpanNext < yaw[index] - error + set || simpanNext > yaw[index] + error + set){
+          simpanNext = getYaw();
           //Jika dari putaran kanan
           if((simpan >= 270 && simpan <= 360) && (simpanNext >= 0 && simpanNext <= 90)){
             putar++;
@@ -191,272 +432,35 @@ class Robot{
               simpanNext += putar * 360;
             }
           }
-          if(simpanNext < yaw[index] - error)
-              rotate(KANAN, height, 1, derajat, tipeLangkah, speed);
-          if(simpanNext > yaw[index] + error)
-              rotate(KIRI, height, 1, derajat, tipeLangkah, speed);
           
-      }while(simpanNext < yaw[index] - error || simpanNext > yaw[index] + error);
-    }
-
-    void setPos(int index, int height, int set, int error, float derajat, int tipeLangkah, int speed = 10){
-      //DEFAULT ERROR 2
-      //DEFAULT ERROR 3.5 TINGGI
-
-      //DEFAULT DERAJAT 3 NORMAL
-      //DEFAULT DERAJAT 5 TINGGI
-      double simpan = kompas.getCurrent().x;
-      double simpanNext = simpan;
-      int putar = 0;
-
-      do{
-          simpanNext = kompas.getCurrent().x;
-          //Jika dari putaran kanan
-          if((simpan >= 270 && simpan <= 360) && (simpanNext >= 0 && simpanNext <= 90)){
-            putar++;
-          }
-          if((simpan >= 360 && simpan <= 450) && (simpanNext >= 270 && simpanNext <= 360)){
-            putar--;
-          }
-          //jika dari putaran kiri
-          if((simpanNext >= 270 && simpanNext <= 360) && (simpan >= 0 && simpan <= 90)){
-            putar--;
-          }
-          if((simpanNext >= 360 && simpanNext <= 450) && (simpan >= 270 && simpan <= 360)){
-            putar++;
-          }
-          //digunakan hanya jika dia lagi menuju ke yaw yang berada diperbatasan 360
-          if(yaw[index] >= 345 && yaw[index] <= 375){
-            simpanNext += putar * 360;
-            if(simpanNext < 90){
-              putar++;
-              simpanNext += putar * 360;
-            }
-          }
           if(simpanNext < yaw[index] - error + set)
-              rotate(KANAN, height, 1, derajat, tipeLangkah, speed);
+              rotate(KANAN, height, 1, derajat, tipeLangkah);
 
           if(simpanNext > yaw[index] + error + set)
-              rotate(KIRI, height, 1, derajat, tipeLangkah, speed);
+              rotate(KIRI, height, 1, derajat, tipeLangkah);
           
           simpan = simpanNext;
-      }while(simpanNext < yaw[index] - error + set || simpanNext > yaw[index] + error + set);
+      }
+      //update state robot
+      this->direction = index;
+      this->offsetDirection = set;
     }
 
-    void point1(){
-      int langkah = 0;
-
-      // Langkah ke depan korban 1
-      while(1){
-        if(langkah % 3 == 0 && langkah != 0)
-          fixPos(0, DEFAULT, 2, 3, NORMAL);
-        
-        move(MAJU, DEFAULT, 10, NORMAL);
-        if(jarak.jarakBelakang() >= 490)
-            break;
-        langkah++;
-      }
-      
-      berdiri(NORMAL);
-
-      // Putar arah korban (KIRI)
-      setPos(1, DEFAULT, 0, 3, 8, NORMAL);
-
-      berdiri(NORMAL);
-
-      // Mundur untuk meluruskan
-      while(1) {
-        move(MUNDUR, DEFAULT, 10, NORMAL);
-
-        if(jarak.jarakBelakang() <= 100) 
-            break;
-      }
-
-      // Mengambil korban
-      getKorban(DEFAULT, 10, NORMAL);
-      
-      // Mundur ke titik tertentu agar kaki dapat masuk ke area retak
-      langkah = 0;
-      while(1) {
-        if(jarak.jarakBelakang() <= 80)
-            break;
-
-        if(langkah % 3 == 0 && langkah != 0)
-            fixPos(1, DEFAULT, 2, 3, NORMAL);
-
-        move(MUNDUR, DEFAULT, 5, NORMAL);
-        langkah++; 
-      }
-
-      berdiri(NORMAL);
-
-      // Putar kanan dan luruskan (ke depan)
-      setPos(0, DEFAULT, 0, 3, 8, NORMAL);
-
-      langkah = 0;
-      while(1){
-        if(jarak.jarakBelakang() >= 530)
-            break;
-
-        if(langkah % 3 == 0 && langkah != 0)
-          fixPos(0, DEFAULT, 2, 3, NORMAL);
-      
-        move(MAJU, DEFAULT, 8, NORMAL);
-        langkah++;
-      }
-
-      fixPos(0, DEFAULT, 2, 3, NORMAL);
+     //Untuk keperluan testing StandPoint
+    void berdiriDebug(vec3_t standPoint){
+        kaki.berdiriDebug(standPoint);
     }
-
-    void point2(){
-      int langkah = 0;
-
-      berdiri(SEDANG_25);
-
-      while(1){
-        if(kompas.getCurrent().z < -14)
-            break;
-
-        if(langkah % 3 == 0 && langkah != 0)
-            fixPos(0, DEFAULT, 8, 12, SEDANG_25, 150);
-        
-        move(MAJU, DEFAULT, 18, SEDANG_25, 150);
-        langkah++;
-      }
-      
-      //masuk turunan
-      berdiri(SEDANG_15);
-      
-      langkah = 0;
-      while(1) {
-        if(kompas.getCurrent().z > -3) 
-            break;
-
-        if(langkah % 3 == 0 && langkah != 0) 
-          fixPos(0, DEFAULT, 3.5, 15, SEDANG_15, 80);
-
-        move(MAJU, DEFAULT, 20, SEDANG_15, 80);
-        langkah++;
-      }
+    //Untuk keperluan testing StandPoint
+    void moveDebug(int action, vec3_t tinggi, float derajat, vec3_t standPoint, int speed = 10){
+      //USE DEFAULT UNTUK HEIGHT BILA TIDAK MAU SPECIFY
+      kaki.jalanDebug(action, standPoint, derajat, tinggi, speed);
     }
-
-    void point3(){
-      fixPos(0, DEFAULT, 3, 3, SEDANG_15, 60);
-      berdiri(SEDANG_15);
-
-      int langkah = 0;
-      while(1) {
-        if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0, DEFAULT, 8, 3.5, SEDANG_15, 60);
-          if(jarak.jarakDepan() <= 250) 
-            break;
-        }
-        
-        move(MAJU, 40, 8, SEDANG_15, 60);
-        langkah++;
-      }
-      //hadap 25 derajat miring dari depan
-      setPos(0, DEFAULT, 25, 3.5, 5, SEDANG_15, 60);
-
-      berdiri(SEDANG_15);
-      
-      capit.turunLengan(); 
-      capit.bukaCapit();
-      for(int i = 0; i < 2; i++){
-          move(MUNDUR, 40, 8, SEDANG_15, 60);
-        }
-      capit.naikLengan();
-      capit.tutupCapit();
-      
-      //menuju ke depan daerah kelereng
-      //hadap kiri
-      setPos(1, DEFAULT, 0, 3.5, 8, SEDANG_15, 60);
-      //maju sampai mentok
-      langkah = 0;
-      while(1) {
-        if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0, DEFAULT, 2, 3, SEDANG_15, 60);
-          if(jarak.jarakBelakang() >= 170) 
-            break;
-        }
-        
-        move(MAJU, DEFAULT, 8, SEDANG_15, 60);
-        langkah++;
-      }
-      if(jarak.jarakKanan() > 110){
-        //hadap depan
-        setPos(0, DEFAULT, 0, 3.5, 10, SEDANG_15, 60);
-        //maju sampai mentok
-        langkah = 0;
-        while(1) {
-          if(langkah % 3 == 0 && langkah != 0){
-            fixPos(0, DEFAULT, 2, 3, SEDANG_15, 60);
-            if(jarak.jarakDepan() <= 80) 
-              break;
-          }
-          
-          move(MAJU, DEFAULT, 8, SEDANG_15, 60);
-          langkah++;
-        }
-      }
-      //hadap ke kiri
-      setPos(1, DEFAULT, 0, 3.5, 8, SEDANG_15, 60);
+    //Print kompas
+    void printCurrentYPR(){
+      kompas.printCurrent();
     }
-
-    void point4(){
-      berdiri(SEDANG_20);
-
-      int langkah = 0;
-
-      while(1) {
-        if(langkah % 3 == 0 && langkah != 0){
-          fixPos(1, DEFAULT, 5, 12, SEDANG_20, 50);
-        }
-        if(jarak.jarakBelakang() >= 440 && jarak.jarakDepan() >= 440)
-            break;
-        
-        move(MAJU, DEFAULT, 15, SEDANG_20, 50);
-        langkah++;
-      }
-
-      //hadap ke korban (belakang)
-      setPos(3, DEFAULT, 0, 3.5, 18, SEDANG_20, 50);
-
-      berdiri(SEDANG_20);
-
-      getKorban(DEFAULT, 10, NORMAL);
-
-      berdiri(SEDANG_20);
-      
-      //hadap ke kiri 
-      setPos(1, DEFAULT, 0, 3.5, 12, SEDANG_20, 50);
-
-      langkah = 0;
-      while(1) {
-        if(langkah % 3 == 0 && langkah != 0){
-          fixPos(0, DEFAULT, 3.5, 8, TINGGI, 50);
-          if(jarak.jarakDepan() <= 300) 
-            break;
-        }
-        
-        move(MAJU, DEFAULT, 12, SEDANG_20, 50);
-        langkah++;
-      }
-      //hadap 65 derajat miring dari kiri
-      setPos(1, DEFAULT, 65, 3.5, 8, TINGGI, 50);
-
-      berdiri(NORMAL);
-      
-      capit.turunLengan(); 
-      capit.bukaCapit();
-      for(int i = 0; i < 2; i++){
-          move(MUNDUR, 40, 8, SEDANG_20, 50);
-        }
-      capit.naikLengan();
-      capit.tutupCapit();
-
-      berdiri(SEDANG_20);
-
-      setPos(3, DEFAULT, 0, 3.5, 10, SEDANG_20, 50);
+    //print ultrasonic
+    void printJarak(){
+      jarak.printJarak();
     }
 };
