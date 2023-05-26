@@ -45,6 +45,28 @@ vec3_t InversKinematik(vec3_t target){
     return {thetaC,thetaF,thetaT};
 }
 
+vec3_t InversKinematikSecond(vec3_t target){
+    // Fungsi Invers Kinematik
+    
+    float thetaC = atan2(target.z, target.x) * 180/PI;
+    
+    float l = sqrt(target.x * target.x + target.z * target.z);
+    float x0 = l - coxaLength;
+    float thetaF1 = atan2(target.y, x0);
+    
+    float a = sqrt(pow(x0, 2) + pow(target.y, 2));
+    float thetaF2 = acos((pow(fermurLength, 2) + pow(a, 2) - pow(thibiaLength, 2) ) / (2 * a * fermurLength));
+    float thetaF = (thetaF1 + thetaF2)* 180/PI;
+    float thetaT = (acos((pow(fermurLength, 2) + pow(thibiaLength, 2) - pow(a, 2) )/ (2 * thibiaLength * fermurLength)) * 180/PI - 90);
+    
+    //normalisasi
+    thetaC = 90 - thetaC;
+    // thetaF = 0 - thetaF - 45; // TIDAK PERLU
+    thetaT =  0 - (thetaT - 90) - 45; 
+
+    return {thetaC,thetaF,thetaT};
+}
+
 int mapServo(int deg){
     // Mapping dari sudut ke derajat servo
 

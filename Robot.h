@@ -31,7 +31,7 @@ class Robot{
     int kondisiTargetJarakMax[4] = {0,0,0,0}; 
     int kondisiTargetRollMin = 0; //kondisi target dari roll, jika 0 abaikan
     int kondisiTargetRollMax = 0;
-    int state = MANUALMODE;
+    int state = 0;
     /*
      * yaw[0] -> depan
      * yaw[1] -> kiri
@@ -173,8 +173,8 @@ class Robot{
     void rotate(int action, int height, int step, float derajat, int tipeLangkah, int speed = 10){
       //DEFAULT DERAJAT (15 KIRI) (16 KANAN) 5 STEP
       for(int i = 0 ; i < step ; i++){
-          
           kaki.putar(action, tipeLangkah, derajat, height, speed);
+          readUltrasonic();
           Serial.print("Rotasi 1: ");
           printCurrentYPR();
       }
@@ -193,8 +193,9 @@ class Robot{
         yaw[FRONT] = yaw[BACK] + 180;
         yaw[RIGHT] = yaw[BACK] - 90;
         yaw[LEFT] = yaw[BACK] + 90;
-
-        setPos(DEFAULT, DEFAULT, DEFAULT, DEFAULT,this->derajatLangkah, DEFAULT);
+        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        setPos();
       }
       else if(jarak.jarakKiri() >= 350){ // Berarti lagi ngadep kanan
         yaw[RIGHT] = getYaw();
@@ -203,7 +204,8 @@ class Robot{
         yaw[FRONT] = yaw[RIGHT] - 90;
         yaw[BACK] = yaw[RIGHT] + 90;
 
-        setPos(DEFAULT, DEFAULT, DEFAULT, DEFAULT,this->derajatLangkah, DEFAULT);
+        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        setPos();
       }
       else if(jarak.jarakKanan() >= 350){ // Berarti lagi ngadep kiri
         yaw[LEFT] = getYaw();
@@ -212,7 +214,8 @@ class Robot{
         yaw[BACK] = yaw[LEFT] - 90;
         yaw[FRONT] = yaw[LEFT] + 90;
 
-        setPos(DEFAULT, DEFAULT, DEFAULT, DEFAULT,this->derajatLangkah, DEFAULT);
+        rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        setPos();
       }
       else if(jarak.jarakDepan() >= 350){ // Ngadep depan
         yaw[FRONT] = getYaw();
@@ -285,7 +288,7 @@ class Robot{
 
       int X, Y, W, H;
       X = Y = W = H = 0;
-
+      berdiri(NORMAL);
       delay(200);
 
       capit.turunLengan();
@@ -307,7 +310,7 @@ class Robot{
 
         if(W - H >= 85) break;
       }
-      berdiri(NORMAL);
+      
       delay(500);
       capit.tutupCapit();
       berdiri(tipeLangkah);
@@ -433,11 +436,15 @@ class Robot{
             }
           }
           
-          if(simpanNext < yaw[index] - error + set)
-              rotate(KANAN, height, 1, derajat, tipeLangkah);
-
-          if(simpanNext > yaw[index] + error + set)
-              rotate(KIRI, height, 1, derajat, tipeLangkah);
+          if(simpanNext < yaw[index] - error + set){
+            rotate(KANAN, height, 1, derajat, tipeLangkah);
+            readUltrasonic();
+          }
+              
+          if(simpanNext > yaw[index] + error + set){
+            rotate(KIRI, height, 1, derajat, tipeLangkah);
+            readUltrasonic();
+          }    
           
           simpan = simpanNext;
       }

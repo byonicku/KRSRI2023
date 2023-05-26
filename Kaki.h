@@ -81,6 +81,13 @@ class Kaki{
         // Serial.println(mapServo(deggs.z * this->pos));
         // Serial.println();   
     }
+
+    void moveToPointSecond(vec3_t target){
+        vec3_t deggs = InversKinematikSecond(target);
+        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 300);
+        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 300);
+        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 300);   
+    }
     
     void init(){
         // Inisialiasasi servo ke titik 0

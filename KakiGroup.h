@@ -59,8 +59,8 @@ class KakiGroup{
 
     void berdiriSamping(int tipeLangkah){
       // Set kaki ke poin berdiri (standpoint)
-      vec3_t sudutSampingL = {20,0,-13};
-      vec3_t sudutSampingR = {-20,0,-13};
+      vec3_t sudutSampingL = {22,0,-10};
+      vec3_t sudutSampingR = {-22,0,-10};
       vec3_t newStandPointL = this->standPoint[tipeLangkah] + sudutSampingL;
       vec3_t newStandPointR = this->standPoint[tipeLangkah] + sudutSampingR;
       
@@ -101,6 +101,21 @@ class KakiGroup{
         delay(speed);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
     }
+
+    void langkahSamping(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur, int speed = 10){
+      do{
+        vec3_t tempMaju = stepsMaju.dequeue();
+        vec3_t tempMundur = stepsMundur.dequeue();
+        
+        LF.langkahPutar(tempMaju,tempMundur);
+        RF.langkahPutar(tempMaju,tempMundur);
+        LM.langkahPutar(tempMaju,tempMundur);
+        RM.langkahPutar(tempMaju,tempMundur);
+        LB.langkahPutar(tempMaju,tempMundur);
+        RB.langkahPutar(tempMaju,tempMundur);
+        delay(speed);
+      }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
+    }
     
     void jalan(int dir, int tipeLangkah, float derajat, int height, int speed){
       vec3_t tinggi = this->tinggi[tipeLangkah]; // Mengatur ketinggian dari langkah
@@ -132,6 +147,26 @@ class KakiGroup{
       
       langkahPutar(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed);
       langkahPutar(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed);
+    }
+
+    void samping(int dir, int tipeLangkah, float derajat, int height, int speed){
+      vec3_t tinggi = this->tinggi[tipeLangkah]; // Mengatur ketinggian dari langkah
+      //jika custom
+      if(height > 0)
+        tinggi = {0, -height, this->tinggi[tipeLangkah].z};
+
+      vec3_t sudutSampingL = {22,0,-10};
+      vec3_t sudutSampingR = {-22,0,-10};
+      vec3_t newStandPointL = this->standPoint[tipeLangkah] + sudutSampingL;
+      vec3_t newStandPointR = this->standPoint[tipeLangkah] + sudutSampingR;
+      
+      vec3_t P1 = this->standPoint[tipeLangkah];
+      vec3_t P4 = this->standPoint[tipeLangkah];
+
+      vec3_t naik = tinggi + this->standPoint[tipeLangkah];
+      
+      langkahSamping(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed);
+      langkahSamping(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed);
     }
 
     //Untuk keperluan testing StandPoint Baru

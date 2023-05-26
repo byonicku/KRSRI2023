@@ -45,7 +45,7 @@ void loop(){
      }
      //mundur menyesuaikan dengan jalan retak
      case 5:{
-        KSR2023.kondisiTargetJarakMax[BACK] = 100;
+        KSR2023.kondisiTargetJarakMax[BACK] = 60;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MUNDUR;
         KSR2023.derajatLangkah = 5;
@@ -67,11 +67,12 @@ void loop(){
      }
      //maju jalan retak
      case 8:{
-        KSR2023.kondisiTargetRollMax = -14;
+        KSR2023.kondisiTargetRollMax = -12;
         KSR2023.tipeLangkah = SEDANG_25;
         KSR2023.derajatLangkah = 18;
         KSR2023.speed = 150;
-        KSR2023.error = 8;
+        KSR2023.error = 12;
+        KSR2023.derajatLangkahSetPos = 10;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break; 
@@ -83,13 +84,14 @@ void loop(){
         KSR2023.derajatLangkah = 15;
         KSR2023.speed = 80;
         KSR2023.error = 3;
+        KSR2023.derajatLangkahSetPos = 3;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break; 
      }
      //masuk jalan batu
      case 10:{
-        KSR2023.kondisiTargetJarakMax[FRONT] = 200;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 100;
         KSR2023.tipeLangkah = SEDANG_10;
         KSR2023.derajatLangkah = 8;
         KSR2023.speed = 60;
@@ -97,47 +99,39 @@ void loop(){
         KSR2023.movingDirection = MAJU;
         break; 
      }
-     //putar 25 derajat untuk letakin boneka
+     //belok kanan hadap safezone
      case 11:{
-        KSR2023.offsetDirection = 25;
-        KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = STAY;
-        break; 
-     }
-     //letakkan korban
-     case 12:{
-        KSR2023.letakanKorban();
-        KSR2023.offsetDirection = 0;
-        break; 
-     }
-     //posisiin robot lewat kelereng
-     case 13:{
-        if(KSR2023.jarakKanan() <= 180){
-          KSR2023.state = 16;
-        }else{
-          KSR2023.movingType = ROTATING;
-          KSR2023.movingDirection = KIRI;
-        }
-        break;
-     }
-     case 14:{
-        KSR2023.kondisiTargetJarakMin[BACK] = 180;
-        KSR2023.movingType = MOVING;
-        KSR2023.movingDirection = MAJU;
-        break;
-     }
-     case 15:{
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = KANAN;
-        break;
+        break; 
      }
-     case 16:{
-        KSR2023.kondisiTargetJarakMax[FRONT] = 150;
+     //maju sampai aman untuk letakkan korban
+     case 12:{
+        KSR2023.kondisiTargetJarakMax[FRONT] = 180;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break;
      }
-     case 17:{
+     //letakkan korban
+     case 13:{
+        KSR2023.letakanKorban();
+        break; 
+     }
+     //belok kiri hadap korban
+     case 14:{
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = KIRI;
+        break;
+     }
+     //maju sampai mentok
+     case 15:{
+        KSR2023.kondisiTargetJarakMax[BACK] = 100;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        break; 
+     }
+     //hadap ke kelereng
+     case 16:{
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = KIRI;
         break;
@@ -147,9 +141,11 @@ void loop(){
         KSR2023.tipeLangkah = SEDANG_25;
         KSR2023.derajatLangkah = 18;
         KSR2023.speed = 120;
-        KSR2023.kondisiTargetJarakMax[FRONT] = 430;
+        KSR2023.kondisiTargetJarakMin[BACK] = 430;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
+        KSR2023.error = 8;
+        KSR2023.derajatLangkahSetPos = 10;
         break;
      }
      //hadap ke boneka
@@ -159,29 +155,126 @@ void loop(){
         break;
      }
      case 20:{
+        KSR2023.tipeLangkah = NORMAL;
+        KSR2023.derajatLangkah = 10;
+        KSR2023.speed = 10;
         KSR2023.getKorban();
         break;
      }
      case 21:{
+        KSR2023.tipeLangkah = TINGGI;
+        KSR2023.derajatLangkah = 18;
+        KSR2023.speed = 150;
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = KANAN;
         break;
      }
      case 22:{
-        KSR2023.tipeLangkah = TINGGI;
-        KSR2023.derajatLangkah = 18;
-        KSR2023.speed = 150;
-        KSR2023.kondisiTargetJarakMax[FRONT] = 200;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 150;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break;
      }
-     //hadap miring 25 derajat ke kanan untuk letakkin boneka
+     //hadap miring 35 derajat ke kanan untuk letakkin boneka
      case 23:{
-        KSR2023.offsetDirection = 25;
+        KSR2023.offsetDirection = 35;
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = STAY;
         break; 
+     }
+     //letakkin korban
+     case 24:{
+        KSR2023.letakanKorban();
+        KSR2023.offsetDirection = 0;
+        break; 
+     }
+     case 25:{
+        KSR2023.tipeLangkah = TINGGI;
+        KSR2023.derajatLangkah = 18;
+        KSR2023.speed = 150;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 100;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        break;
+     }
+     case 26:{
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = KIRI;
+        KSR2023.offsetDirection = 15;
+        break; 
+     }
+     //maju sampai dekat sebelum ke jalan retak 2
+     case 27:{
+        KSR2023.kondisiTargetJarakMin[BACK] = 400;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        KSR2023.error = 3;
+        KSR2023.derajatLangkahSetPos = 3;
+        break;
+     }
+     //miringkan dikit
+     case 28:{
+        KSR2023.offsetDirection = -50;
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = STAY;
+     }
+     //maju teruss sampai jalan retak
+     case 29:{
+        KSR2023.tipeLangkah = TINGGI;
+        KSR2023.derajatLangkah = 18;
+        KSR2023.speed = 120;
+        KSR2023.kondisiTargetJarakMax[LEFT] = 80;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        KSR2023.error = 8;
+        KSR2023.derajatLangkahSetPos = 8;
+        break;
+     }
+     //luruskan kalau mentok
+     case 30:{
+        KSR2023.offsetDirection = 0;
+        break; 
+     }
+     //maju ke depan sampai mentok
+     case 31:{
+        KSR2023.kondisiTargetJarakMax[FRONT] = 80;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        break;
+     }
+     //putar kanan
+     case 32:{
+        KSR2023.tipeLangkah = SEDANG_10;
+        KSR2023.derajatLangkah = 15;
+        KSR2023.speed = 40;
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = KANAN;
+        KSR2023.error = 3;
+        KSR2023.derajatLangkahSetPos = 3;
+        break; 
+     }
+     //Maju sampai mentok
+     case 33:{
+        KSR2023.tipeLangkah = SEDANG_10;
+        KSR2023.derajatLangkah = 10;
+        KSR2023.speed = 80;
+        KSR2023.error = 3;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 80;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        break;
+     }
+     //putar kiri
+     case 34:{
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = KIRI;
+        break; 
+     }
+     case 35:{
+        KSR2023.kondisiTargetJarakMin[BACK] = 520;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        break;
      }
      //Mode Manual
      case MANUALMODE:{
@@ -273,6 +366,7 @@ void manualMod(){
   do{
       
       if(Serial.available() > 0){
+        int step = 1;
         String input = Serial.readString();
         if(input.startsWith("END")){
           KSR2023.state = 0;
@@ -280,14 +374,20 @@ void manualMod(){
           return;
         }
         if(input.startsWith("MAJU")){
-          KSR2023.maju();
-          KSR2023.setPos();
+          step = getValue(input, '-',1).toInt();
+          for(int i = 0; i < step; i++){
+            KSR2023.maju();
+            KSR2023.setPos();
+          }
           printData();
           continue;
         }
         if(input.startsWith("MUNDUR")){
-          KSR2023.mundur();
-          KSR2023.setPos();
+          step = getValue(input, '-',1).toInt();
+          for(int i = 0; i < step; i++){
+            KSR2023.mundur();
+            KSR2023.setPos();
+          }
           printData();
           continue;
         }
@@ -316,13 +416,14 @@ void manualMod(){
 
         //konversi parameter
         /*  FORMAT set parameter
-         *  tipeLangkah-derajatLangkah-height-offsetDirection-direction-speed
+         *  tipeLangkah-derajatLangkah-height-offsetDirection-direction-speed-error
          *  tipeLangkah: 0-5 (6 abaikan)
          *  derajatLangkah: 1-18 (0 abaikan)
          *  height: 0 <= (0 DEFAULT) //Sebaiknya tidak diubah
          *  offsetDirection: 0 <= (0 DEFAULT)
          *  direction: 0-3 (4 abaikan)
          *  speed: 0 <= (0 DEFAULT)
+         *  error: 1 <= (0 abaikan)
          */
         int tipeLangkah = getValue(input, '-',0).toInt();
         int derajatLangkah = getValue(input, '-',1).toInt();
@@ -330,7 +431,8 @@ void manualMod(){
         int offsetDirection = getValue(input, '-',3).toInt();;
         int direction = getValue(input, '-',4).toInt();
         int speed = getValue(input, '-',5).toInt();
-
+        int error = getValue(input, '-',6).toInt();
+        
         if(tipeLangkah <= 5){
           KSR2023.tipeLangkah = tipeLangkah;
           KSR2023.berdiri();
@@ -354,6 +456,10 @@ void manualMod(){
         }
         if(speed >= 0){
           KSR2023.speed = speed;
+          printData();
+        }
+        if(error > 0){
+          KSR2023.error = error;
           printData();
         }
         KSR2023.setPos();
@@ -402,35 +508,43 @@ void testJalanStandPoint(int tipeLangkah){
 //Panggil di setup jika ingin mencari standPoint baru
 void debugNewStandPoint(){
     //Untuk testing stand point
-    cariStandpoint(); //untuk mencari value standPoint baru
-    vec3_t tinggiDebug = {0,-45,-4}; //tinggi maks langkah dari standPointDebug
-    vec3_t standPointDebug = {0,-20, 32}; //standPoint baru ingin ditext
-
+    //cariStandpoint(); //untuk mencari value standPoint baru
+    vec3_t tinggiDebug = {12,0,-6}; //tinggi maks langkah dari standPointDebug
+    vec3_t standPointDebug = {0, -28, 18}; //standPoint baru ingin ditext
+    vec3_t masuk = {-2,2,-4};
+    vec3_t naik = {0,-20,-10};
+    vec3_t geser = {-30,-10,-30};
+//    KSR2023.init();
+//    KSR2023.kaki.berdiriSamping(NORMAL);
     //untuk test di satu kaki (gunakan untuk mencari value tinggiDebug
-    vec3_t naikDebug = tinggiDebug + standPointDebug;
-    Kaki(1,2,3, KIRI, GRUP2, DEPAN).moveToPoint(naikDebug);
+    vec3_t naikDebug = tinggiDebug + standPointDebug + masuk;
+    Kaki(1,2,3, KIRI, GRUP2, DEPAN).moveToPointSecond(naikDebug);
     
     //test jalan
-    KSR2023.berdiriDebug(standPointDebug); //test berdiri
-    for(int i = 0; i < 10; i++){
-      KSR2023.moveDebug(MAJU, tinggiDebug, 10, standPointDebug, 500);
-    }
-    KSR2023.berdiriDebug(standPointDebug);
+//    KSR2023.berdiriDebug(standPointDebug); //test berdiri
+//    for(int i = 0; i < 10; i++){
+//      KSR2023.moveDebug(MAJU, tinggiDebug, 10, standPointDebug, 500);
+//    }
+//    KSR2023.berdiriDebug(standPointDebug);
 }
 
 // ini dibawah sebelumnya untuk nyari standpoint yg pas :v
 void cariStandpoint(){
   Serial.println("Mulai");
-  for(int i = -200 ; i < 0 ; i++){
-      for(int j = 0 ; j < 200 ; j++){
-          vec3_t standPointTinggi = {0, i, j};
-          vec3_t deggs = InversKinematik(standPointTinggi);
+  for(int i = -200 ; i < 200 ; i++){
+      for(int j = -200 ; j < 200 ; j++){
+        for(int k = -200; k < 200; k++){
+          vec3_t miring = {22,0,-10}; //tinggi maks langkah dari standPointDebug
+          vec3_t standPointDebug = {0, -42, 37}; //standPoint baru ingin ditext
+          vec3_t standPointTinggi = {i, j, k};
+          vec3_t result = miring + standPointDebug + standPointTinggi;
+          vec3_t deggs = InversKinematik(result);
           /*
            * Gunakan relasi y dan z berupa y = 90 - z untuk mencari standPoint
            * Contoh: y = 30 & z = 60
           */
-          if((deggs.y > 24 && deggs.y < 26) && deggs.x == 0 && (deggs.z > (90 - deggs.y - 2) && deggs.z < (90 - deggs.y + 2))){
-            Serial.print("TEST "); Serial.println(i); Serial.print(" i: "); Serial.print(i); Serial.print(" j: "); Serial.print(j); Serial.println();          
+          if((deggs.y > -1 && deggs.y < 1) && (deggs.x > 39 && deggs.x < 41) && (deggs.z < -50 && deggs.z > -70) ){
+            Serial.print("TEST "); Serial.println(i); Serial.print(" i: "); Serial.print(i); Serial.print(" j: "); Serial.print(j); Serial.print(" k: "); Serial.print(k);Serial.println();          
             Serial.println();
             Serial.print(deggs.x);
             Serial.print(" , ");
@@ -438,6 +552,7 @@ void cariStandpoint(){
             Serial.print(" , ");
             Serial.println(deggs.z);
           }
+        }
       }
   }
   Serial.println("Selesai");
