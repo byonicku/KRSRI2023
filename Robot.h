@@ -16,22 +16,22 @@ class Robot{
     Kompas kompas;
   public:
     //parameter robot
-    int tipeLangkah = NORMAL;
-    float derajatLangkah = 10;
-    float derajatLangkahSetPos = 3;
-    int height = DEFAULT;
-    int direction = FRONT;
-    int offsetDirection = 0;
-    int movingType = STAY; //jenis gerakan lagi diam, gerak maju mundur, atau mutar
+    int tipeLangkah = NORMAL; //jenis langkah
+    float derajatLangkah = 10; //besar langkah kaki saat jalan 
+    float derajatLangkahSetPos = 3; //besar langkah kaki saat mengoreksi diri
+    int height = DEFAULT; //tinggi langkah kaki, sebaiknya tidak diubah
+    int direction = FRONT; //arah hadap robot, akan diupdate scr otomatis setiap mutar
+    int offsetDirection = 0; //kemiringan robot terhadap direction yg dihadap robot
+    int movingType = STAY; //jenis gerakan STAY-MOVING-ROTATING
     int movingDirection = STAY; //arah gerakan MAJU-MUNDUR-KIRI-KANAN
-    float error = 3.0;
-    int speed = 10;
-    bool isHoldingKorban = false;
+    float error = 3.0; //toleransi selisih error yaw Real robot dengan direction robot
+    int speed = 10; //kecepatan delay antar langkah kaki robot
+    bool isHoldingKorban = false; //Apakah robot sedang memegang korban atau tidak
     int kondisiTargetJarakMin[4] = {0,0,0,0}; //kondisi target dari ke-4 jarak, jika 0 abaikan
-    int kondisiTargetJarakMax[4] = {0,0,0,0}; 
+    int kondisiTargetJarakMax[4] = {0,0,0,0};
     int kondisiTargetRollMin = 0; //kondisi target dari roll, jika 0 abaikan
     int kondisiTargetRollMax = 0;
-    int state = 0;
+    int state = 0; //state dari robot, set MANUALMODE jika ingin diatur manual
     /*
      * yaw[0] -> depan
      * yaw[1] -> kiri

@@ -283,26 +283,24 @@ void loop(){
         break;
      }
   }
-  //Print kondisi robot
+  //Print kondisi robot, dikomen jika sudah tidak perlu debuging
   KSR2023.printCurrentYPR();
   KSR2023.printJarak();
   KSR2023.printState();
   
   if(KSR2023.movingType != STAY){
-    //mengecek kondisi sudah terpenuh atau tidak
-    cekKondisi();
-    KSR2023.move();
+    cekKondisi(); //mengecek kondisi sudah terpenuh atau tidak
+    KSR2023.move(); //jika blm, jalankan
   }
-  KSR2023.setPos();
-  //update Buffer
-  KSR2023.readUltrasonic();
+  KSR2023.setPos(); //rapikan 
+  KSR2023.readUltrasonic(); //update Buffer
   //keamanan
   keamanan();
   //Manual Mode di comment aja jika tidak dipakai
   if(Serial.available() > 0){
     KSR2023.state = MANUALMODE;
     Serial.println("Manual mode actived...");
-    String dump = Serial.readString();
+    String dump = Serial.readString(); //buang inputan pertama user
     manualMod();
   }
 }
