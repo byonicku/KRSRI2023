@@ -12,12 +12,13 @@ class Robot{
     SensorJarakGroup jarak;
     Kamera kamera;
     Sweeper sweeper;
-    Capit capit;
+    
     Kompas kompas;
   public:
+  Capit capit;
     //parameter robot
     int tipeLangkah = NORMAL; //jenis langkah
-    float derajatLangkah = 10; //besar langkah kaki saat jalan 
+    float derajatLangkah = 15; //besar langkah kaki saat jalan 
     float derajatLangkahSetPos = 3; //besar langkah kaki saat mengoreksi diri
     int height = DEFAULT; //tinggi langkah kaki, sebaiknya tidak diubah
     int direction = FRONT; //arah hadap robot, akan diupdate scr otomatis setiap mutar
@@ -25,10 +26,11 @@ class Robot{
     int movingType = STAY; //jenis gerakan STAY-MOVING-ROTATING
     int movingDirection = STAY; //arah gerakan MAJU-MUNDUR-KIRI-KANAN
     float error = 3.0; //toleransi selisih error yaw Real robot dengan direction robot
-    int speed = 10; //kecepatan delay antar langkah kaki robot
+    int speed = 8; //kecepatan delay antar langkah kaki robot
     bool isHoldingKorban = false; //Apakah robot sedang memegang korban atau tidak
+    int targetSizeKorban = 85;
     int kondisiTargetJarakMin[4] = {0,0,0,0}; //kondisi target dari ke-4 jarak, jika 0 abaikan
-    int kondisiTargetJarakMax[4] = {0,0,0,0};
+    int kondisiTargetJarakMax[4] = {0,0,0,0}; //jarak sebenarnya lebih kecil daripada kondisi
     int kondisiTargetRollMin = 0; //kondisi target dari roll, jika 0 abaikan
     int kondisiTargetRollMax = 0;
     int state = 0; //state dari robot, set MANUALMODE jika ingin diatur manual
@@ -277,23 +279,36 @@ class Robot{
     }
 
     void getKorban(){
-      getKorban(DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+      getKorban(DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed, this->targetSizeKorban);
       this->isHoldingKorban = true;
     }
     
-    void getKorban(int height, float derajat, int tipeLangkah, int speed = 10){
+    void getKorban(int height, float derajat, int tipeLangkah, int speed = 10, int targetSizeKorban = 85){
       //USE " DEFAULT " JIKA TIDAK MAU SPECIFY HEIGHT
       //DEFAULT DERAJAT 10 NORMAL
       //DEFAULT DERAJAT 20 TINGGI
 
       int X, Y, W, H;
       X = Y = W = H = 0;
-      berdiri(NORMAL);
+      berdiri(tipeLangkah);
       delay(200);
 
       capit.turunLengan();
-      capit.bukaCapit();
-
+      capit.bukaCapit();  
+      int step = 0;
+      int end = 4;
+      int arah = KIRI;
+      while(kamera.getX() == -1){
+        if(step == end){
+          if(end == 4){
+            step = 8;
+          }
+          arah = (arah == KIRI) ? KANAN : KIRI;          
+        }
+        rotate(arah, DEFAULT, 1, 11, this->tipeLangkah, this->speed);
+        step++;
+      }
+      
       while(1){
         X = kamera.getX();
         Y = kamera.getY();
@@ -308,7 +323,20 @@ class Robot{
         W = kamera.getWidth();
         H = kamera.getHeight();
 
-        if(W - H >= 85) break;
+        if(W - H >= targetSizeKorban){
+          if(state == 4){
+            break;
+          }
+          int count = 1;
+          int max = 2;
+          while(W - H >= targetSizeKorban && count <= max){
+            count++;
+            delay(1000);            
+          }
+          if(count > max){
+            break;
+          }
+        }
       }
       
       delay(500);
@@ -340,8 +368,7 @@ class Robot{
       state++;
     }
     
-    void kiri(){
-      rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+    void changeDirToKiri(){
       switch(this->direction){
         case FRONT:{
           this->direction = LEFT;
@@ -360,13 +387,17 @@ class Robot{
           break;
         }
       }
+    }
+
+    void kiri(){
+      rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+      changeDirToKiri();
       berdiri();
       state++;
     }
 
-    void kanan(){
-      rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
-      switch(this->direction){
+    void changeDirToKanan(){
+        switch(this->direction){
         case FRONT:{
           this->direction = RIGHT;
           break;
@@ -384,6 +415,11 @@ class Robot{
           break;
         }
       }
+    }
+
+    void kanan(){
+      rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+      changeDirToKanan();
       berdiri();
       state++;
     }
@@ -469,5 +505,9 @@ class Robot{
     //print ultrasonic
     void printJarak(){
       jarak.printJarak();
+    }
+    
+    void printKamera(){
+      kamera.kameraPrintLocation();
     }
 };
