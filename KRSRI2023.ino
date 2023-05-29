@@ -9,6 +9,9 @@ void setup(){
     Serial.begin(115200);
     KSR2023.init();
     delay(1000);
+    //Untuk mulai dari state tertentu
+    // KSR2023.initManualMode();
+    // KSR2023.state = 19;
 }
 
 void loop(){
@@ -33,19 +36,19 @@ void loop(){
      }
      //mundur utk meluruskan
      case 3:{
-        KSR2023.kondisiTargetJarakMax[BACK] = 100;
+        KSR2023.kondisiTargetJarakMax[BACK] = 130;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MUNDUR;
         break; 
      }
-     //ambil korban
+     //ambil korban pertama
      case 4:{
         KSR2023.getKorban();
         break; 
      }
      //mundur menyesuaikan dengan jalan retak
      case 5:{
-        KSR2023.kondisiTargetJarakMax[BACK] = 60;
+        KSR2023.kondisiTargetJarakMax[BACK] = 100;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MUNDUR;
         KSR2023.derajatLangkah = 5;
@@ -55,12 +58,12 @@ void loop(){
      case 6:{
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = KANAN;
-        KSR2023.derajatLangkah = 10; // direset kembali
+        KSR2023.derajatLangkah = 15; // direset kembali
         break; 
      }
      //maju sampai mentok
      case 7:{
-        KSR2023.kondisiTargetJarakMin[BACK] = 530;
+        KSR2023.kondisiTargetJarakMin[BACK] = 520;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break; 
@@ -70,9 +73,9 @@ void loop(){
         KSR2023.kondisiTargetRollMax = -12;
         KSR2023.tipeLangkah = SEDANG_25;
         KSR2023.derajatLangkah = 18;
-        KSR2023.speed = 150;
+        KSR2023.speed = 120;
         KSR2023.error = 12;
-        KSR2023.derajatLangkahSetPos = 10;
+        KSR2023.derajatLangkahSetPos = 12;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break; 
@@ -81,7 +84,7 @@ void loop(){
      case 9:{
         KSR2023.kondisiTargetRollMin = -3;
         KSR2023.tipeLangkah = SEDANG_15;
-        KSR2023.derajatLangkah = 15;
+        KSR2023.derajatLangkah = 18;
         KSR2023.speed = 80;
         KSR2023.error = 3;
         KSR2023.derajatLangkahSetPos = 3;
@@ -93,7 +96,7 @@ void loop(){
      case 10:{
         KSR2023.kondisiTargetJarakMax[FRONT] = 100;
         KSR2023.tipeLangkah = SEDANG_10;
-        KSR2023.derajatLangkah = 8;
+        KSR2023.derajatLangkah = 12;
         KSR2023.speed = 60;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
@@ -107,119 +110,176 @@ void loop(){
      }
      //maju sampai aman untuk letakkan korban
      case 12:{
-        KSR2023.kondisiTargetJarakMax[FRONT] = 180;
-        KSR2023.movingType = MOVING;
-        KSR2023.movingDirection = MAJU;
+        if(KSR2023.jarakDepan()<=180){
+          KSR2023.kondisiTargetJarakMin[FRONT] = 150;
+          KSR2023.movingType = MOVING;
+          KSR2023.movingDirection = MUNDUR;
+        }else{
+          KSR2023.kondisiTargetJarakMax[FRONT] = 150;
+          KSR2023.movingType = MOVING;
+          KSR2023.movingDirection = MAJU;
+        }
         break;
      }
-     //letakkan korban
+     //mutar
      case 13:{
-        KSR2023.letakanKorban();
-        break; 
+       KSR2023.movingType = ROTATING;
+       KSR2023.offsetDirection = -40;
+       break;
      }
-     //belok kiri hadap korban
+     //letakkan korban pertama
      case 14:{
-        KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KIRI;
-        break;
-     }
-     //maju sampai mentok
-     case 15:{
-        KSR2023.kondisiTargetJarakMax[BACK] = 100;
-        KSR2023.movingType = MOVING;
-        KSR2023.movingDirection = MAJU;
+        KSR2023.letakanKorban();
+        KSR2023.offsetDirection = 0;
         break; 
      }
-     //hadap ke kelereng
-     case 16:{
-        KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KIRI;
-        break;
+     //miring kanan jika kurang kiri atau mundur aja
+     case 15: {
+       if(KSR2023.jarakKiri() >= 110){
+          KSR2023.offsetDirection = 10;
+          KSR2023.movingType = ROTATING;
+          KSR2023.movingDirection = STAY;
+       }
+       else{
+          KSR2023.state = 17;
+       }
+       break;
      }
-     //Masuk ke kelereng
-     case 18:{
+     case 16:
         KSR2023.tipeLangkah = SEDANG_25;
         KSR2023.derajatLangkah = 18;
         KSR2023.speed = 120;
-        KSR2023.kondisiTargetJarakMin[BACK] = 430;
+        KSR2023.kondisiTargetJarakMax[LEFT] = 80;
         KSR2023.movingType = MOVING;
-        KSR2023.movingDirection = MAJU;
+        KSR2023.movingDirection = MUNDUR;
+        KSR2023.error = 8;
+        KSR2023.derajatLangkahSetPos = 10;
+        break;        
+     //Masuk ke kelereng
+     case 17:{
+        KSR2023.tipeLangkah = SEDANG_25;
+        KSR2023.derajatLangkah = 18;
+        KSR2023.speed = 120;
+        KSR2023.kondisiTargetJarakMin[FRONT] = 400;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MUNDUR;
         KSR2023.error = 8;
         KSR2023.derajatLangkahSetPos = 10;
         break;
      }
      //hadap ke boneka
-     case 19:{
+     case 18:{
+        //  KSR2023.state = 25;
         KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KIRI;
+        KSR2023.movingDirection = KANAN;
+        KSR2023.error = 3;
+        KSR2023.derajatLangkahSetPos = 3;
         break;
      }
-     case 20:{
-        KSR2023.tipeLangkah = NORMAL;
+     //jalan ke boneka dan ambil
+     case 19:{
+        KSR2023.tipeLangkah = SEDANG_10;
         KSR2023.derajatLangkah = 10;
         KSR2023.speed = 10;
+        KSR2023.targetSizeKorban = 125;
         KSR2023.getKorban();
         break;
      }
-     case 21:{
-        KSR2023.tipeLangkah = TINGGI;
+     //mundur sampai dekat tembok untuk safe zone
+     case 20:{
+        KSR2023.tipeLangkah = SEDANG_25;
         KSR2023.derajatLangkah = 18;
-        KSR2023.speed = 150;
-        KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KANAN;
+        KSR2023.speed = 120;
+        KSR2023.kondisiTargetJarakMax[BACK] = 130;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MUNDUR;
+        KSR2023.error = 5;
+        KSR2023.derajatLangkahSetPos = 3;
         break;
      }
+     //hadap kanan keluar dari rintangan kelereng
+     case 21:{
+        KSR2023.tipeLangkah = SEDANG_25;
+        KSR2023.derajatLangkah = 18;
+        KSR2023.speed = 120;
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = KANAN;
+        KSR2023.error = 8;
+        KSR2023.derajatLangkahSetPos = 10;
+        break;
+     }
+     //maju deket tembok safezone 2
      case 22:{
-        KSR2023.kondisiTargetJarakMax[FRONT] = 150;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 200;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break;
      }
      //hadap miring 35 derajat ke kanan untuk letakkin boneka
      case 23:{
-        KSR2023.offsetDirection = 35;
+        KSR2023.offsetDirection = 25;
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = STAY;
         break; 
      }
-     //letakkin korban
      case 24:{
+       if(KSR2023.jarakDepan()<=200){
+          KSR2023.kondisiTargetJarakMin[FRONT] = 200;
+          KSR2023.movingType = MOVING;
+          KSR2023.movingDirection = MUNDUR;
+        }else{
+          KSR2023.kondisiTargetJarakMax[FRONT] = 200;
+          KSR2023.movingType = MOVING;
+          KSR2023.movingDirection = MAJU;
+        }
+        break;
+     }
+     //letakkin korban
+     case 25:{
         KSR2023.letakanKorban();
         KSR2023.offsetDirection = 0;
         break; 
      }
-     case 25:{
-        KSR2023.tipeLangkah = TINGGI;
-        KSR2023.derajatLangkah = 18;
-        KSR2023.speed = 150;
-        KSR2023.kondisiTargetJarakMax[FRONT] = 100;
-        KSR2023.movingType = MOVING;
-        KSR2023.movingDirection = MAJU;
-        break;
-     }
+     //agak miring ke kiri
      case 26:{
         KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KIRI;
-        KSR2023.offsetDirection = 15;
+        KSR2023.movingDirection = STAY;
+        KSR2023.offsetDirection = -15;
         break; 
      }
      //maju sampai dekat sebelum ke jalan retak 2
      case 27:{
-        KSR2023.kondisiTargetJarakMin[BACK] = 400;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 120; 
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         KSR2023.error = 3;
-        KSR2023.derajatLangkahSetPos = 3;
+        KSR2023.derajatLangkahSetPos = 3;  
+        break;
+     }
+     //belok ke kiri
+     case 28:{
+        KSR2023.offsetDirection = 0;
+        KSR2023.changeDirToKiri();
+        KSR2023.movingType = ROTATING;
+        KSR2023.movingDirection = STAY;
+        break;
+     }
+     case 29:{
+        KSR2023.kondisiTargetJarakMin[BACK] = 450; 
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
         break;
      }
      //miringkan dikit
-     case 28:{
-        KSR2023.offsetDirection = -50;
+     case 30:{
+        KSR2023.offsetDirection = -45;
+        KSR2023.changeDirToKiri();
         KSR2023.movingType = ROTATING;
         KSR2023.movingDirection = STAY;
+        break;
      }
      //maju teruss sampai jalan retak
-     case 29:{
+     case 31:{
         KSR2023.tipeLangkah = TINGGI;
         KSR2023.derajatLangkah = 18;
         KSR2023.speed = 120;
@@ -231,51 +291,63 @@ void loop(){
         break;
      }
      //luruskan kalau mentok
-     case 30:{
-        KSR2023.offsetDirection = 0;
-        break; 
-     }
      //maju ke depan sampai mentok
-     case 31:{
-        KSR2023.kondisiTargetJarakMax[FRONT] = 80;
-        KSR2023.movingType = MOVING;
-        KSR2023.movingDirection = MAJU;
-        break;
-     }
-     //putar kanan
      case 32:{
-        KSR2023.tipeLangkah = SEDANG_10;
-        KSR2023.derajatLangkah = 15;
-        KSR2023.speed = 40;
-        KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KANAN;
-        KSR2023.error = 3;
-        KSR2023.derajatLangkahSetPos = 3;
-        break; 
+        KSR2023.offsetDirection = 0;
+        KSR2023.kondisiTargetJarakMax[RIGHT] = 240;
+        KSR2023.movingType = MOVING;
+        KSR2023.movingDirection = MAJU;
+        break;
      }
-     //Maju sampai mentok
      case 33:{
-        KSR2023.tipeLangkah = SEDANG_10;
-        KSR2023.derajatLangkah = 10;
-        KSR2023.speed = 80;
-        KSR2023.error = 3;
-        KSR2023.kondisiTargetJarakMax[FRONT] = 80;
+        KSR2023.offsetDirection = 40;
+        KSR2023.kondisiTargetJarakMin[RIGHT] = 240;
+        KSR2023.kondisiTargetJarakMax[FRONT] = 100;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break;
      }
-     //putar kiri
      case 34:{
-        KSR2023.movingType = ROTATING;
-        KSR2023.movingDirection = KIRI;
-        break; 
-     }
-     case 35:{
-        KSR2023.kondisiTargetJarakMin[BACK] = 520;
+        KSR2023.offsetDirection = 15;
+        KSR2023.kondisiTargetJarakMin[RIGHT] = 500;
         KSR2023.movingType = MOVING;
         KSR2023.movingDirection = MAJU;
         break;
      }
+    //  //putar kanan
+    //  case 32:{
+    //     KSR2023.tipeLangkah = SEDANG_10;
+    //     KSR2023.derajatLangkah = 15;
+    //     KSR2023.speed = 40;
+    //     KSR2023.movingType = ROTATING;
+    //     KSR2023.movingDirection = KANAN;
+    //     KSR2023.error = 3;
+    //     KSR2023.derajatLangkahSetPos = 3;
+    //     break; 
+    //  }
+    //  //Maju sampai mentok
+    //  case 33:{
+    //     KSR2023.tipeLangkah = SEDANG_10;
+    //     KSR2023.derajatLangkah = 10;
+    //     KSR2023.speed = 80;
+    //     KSR2023.error = 3;
+    //     KSR2023.kondisiTargetJarakMax[FRONT] = 80;
+    //     KSR2023.movingType = MOVING;
+    //     KSR2023.movingDirection = MAJU;
+    //     break;
+    //  }
+    //  //putar kiri
+    //  case 34:{
+    //     KSR2023.movingType = ROTATING;
+    //     KSR2023.movingDirection = KIRI;
+    //     break; 
+    //  }
+    //  case 35:{
+    //     KSR2023.kondisiTargetJarakMin[BACK] = 520;
+    //     KSR2023.movingType = MOVING;
+    //     KSR2023.movingDirection = MAJU;
+    //     break;
+    //  }
      //Mode Manual
      case MANUALMODE:{
         KSR2023.initManualMode();
@@ -284,9 +356,9 @@ void loop(){
      }
   }
   //Print kondisi robot, dikomen jika sudah tidak perlu debuging
-  KSR2023.printCurrentYPR();
-  KSR2023.printJarak();
-  KSR2023.printState();
+  // KSR2023.printCurrentYPR();
+  // KSR2023.printJarak();
+  // KSR2023.printState();
   
   if(KSR2023.movingType != STAY){
     cekKondisi(); //mengecek kondisi sudah terpenuh atau tidak
@@ -295,14 +367,14 @@ void loop(){
   KSR2023.setPos(); //rapikan 
   KSR2023.readUltrasonic(); //update Buffer
   //keamanan
-  keamanan();
+  //keamanan();
   //Manual Mode di comment aja jika tidak dipakai
-  if(Serial.available() > 0){
-    KSR2023.state = MANUALMODE;
-    Serial.println("Manual mode actived...");
-    String dump = Serial.readString(); //buang inputan pertama user
-    manualMod();
-  }
+  // if(Serial.available() > 0){
+  //   KSR2023.state = MANUALMODE;
+  //   Serial.println("Manual mode actived...");
+  //   String dump = Serial.readString(); //buang inputan pertama user
+  //   manualMod();
+  // }
 }
 
 void keamanan(){
