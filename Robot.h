@@ -11,22 +11,23 @@ class Robot{
     KakiGroup kaki;
     SensorJarakGroup jarak;
     Kamera kamera;
-    Sweeper sweeper;
+    //Sweeper sweeper;
     
     Kompas kompas;
   public:
   Capit capit;
     //parameter robot
     int tipeLangkah = NORMAL; //jenis langkah
-    float derajatLangkah = 15; //besar langkah kaki saat jalan 
-    float derajatLangkahSetPos = 3; //besar langkah kaki saat mengoreksi diri
+    float derajatLangkah = 18; //besar langkah kaki saat jalan 
+    float derajatLangkahSetPos = 10; //besar langkah kaki saat mengoreksi diri
     int height = DEFAULT; //tinggi langkah kaki, sebaiknya tidak diubah
     int direction = FRONT; //arah hadap robot, akan diupdate scr otomatis setiap mutar
-    int offsetDirection = 0; //kemiringan robot terhadap direction yg dihadap robot
+    int offsetDirection = 5; //kemiringan robot terhadap direction yg dihadap robot
     int movingType = STAY; //jenis gerakan STAY-MOVING-ROTATING
     int movingDirection = STAY; //arah gerakan MAJU-MUNDUR-KIRI-KANAN
-    float error = 3.0; //toleransi selisih error yaw Real robot dengan direction robot
-    int speed = 8; //kecepatan delay antar langkah kaki robot
+    float error = 10.0; //toleransi selisih error yaw Real robot dengan direction robot
+    int speed = 350; //kecepatan motor
+    int delayLangkah = 5; //delay antar langkah
     bool isHoldingKorban = false; //Apakah robot sedang memegang korban atau tidak
     int targetSizeKorban = 85;
     int kondisiTargetJarakMin[4] = {0,0,0,0}; //kondisi target dari ke-4 jarak, jika 0 abaikan
@@ -65,6 +66,8 @@ class Robot{
       Serial.print(error);
       Serial.print(" Speed: "); 
       Serial.print(speed);
+      Serial.print(" Delay: "); 
+      Serial.print(delayLangkah);
       Serial.print(" korban: "); 
       Serial.print(isHoldingKorban);
       Serial.print(" MinU: "); 
@@ -93,7 +96,7 @@ class Robot{
 
         kamera.init();
         kompas.init();
-        sweeper.init();
+        //sweeper.init();
         capit.init();
         kaki.berdiri(NORMAL);
     }
@@ -124,11 +127,11 @@ class Robot{
     }
     
     void maju(){
-      move(MAJU, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+      move(MAJU, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed, this->delayLangkah);
     }
 
     void mundur(){
-      move(MUNDUR, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+      move(MUNDUR, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed, this->delayLangkah);
     }
 
     void move(){
@@ -167,17 +170,19 @@ class Robot{
       }
     }
     
-    void move(int action, int height, float derajat, int tipeLangkah, int speed = 10){
+    void move(int action, int height, float derajat, int tipeLangkah, int speed, int delayLangkah){
       //USE DEFAULT UNTUK HEIGHT BILA TIDAK MAU SPECIFY
-      kaki.jalan(action, tipeLangkah, derajat, height, speed);
+      kaki.jalan(action, tipeLangkah, derajat, height, speed, delayLangkah);
     }
     
-    void rotate(int action, int height, int step, float derajat, int tipeLangkah, int speed = 10){
+    void rotate(int action, int height, int step, float derajat, int tipeLangkah, int speed, int delayLangkah){
       //DEFAULT DERAJAT (15 KIRI) (16 KANAN) 5 STEP
       for(int i = 0 ; i < step ; i++){
-          kaki.putar(action, tipeLangkah, derajat, height, speed);
+          kaki.putar(action, tipeLangkah, derajat, height, speed, delayLangkah);
           readUltrasonic();
-          Serial.print("Rotasi 1: ");
+          Serial.print("Rotasi ");
+          Serial.print(i);
+          Serial.print(" : ");
           printCurrentYPR();
       }
     }
@@ -195,8 +200,8 @@ class Robot{
         yaw[FRONT] = yaw[BACK] + 180;
         yaw[RIGHT] = yaw[BACK] - 90;
         yaw[LEFT] = yaw[BACK] + 90;
-        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
-        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed, this->delayLangkah);
+        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed, this->delayLangkah);
         setPos();
       }
       else if(jarak.jarakKiri() >= 350){ // Berarti lagi ngadep kanan
@@ -206,7 +211,7 @@ class Robot{
         yaw[FRONT] = yaw[RIGHT] - 90;
         yaw[BACK] = yaw[RIGHT] + 90;
 
-        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed, this->delayLangkah);
         setPos();
       }
       else if(jarak.jarakKanan() >= 350){ // Berarti lagi ngadep kiri
@@ -216,7 +221,7 @@ class Robot{
         yaw[BACK] = yaw[LEFT] - 90;
         yaw[FRONT] = yaw[LEFT] + 90;
 
-        rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+        rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed, this->delayLangkah);
         setPos();
       }
       else if(jarak.jarakDepan() >= 350){ // Ngadep depan
@@ -277,7 +282,9 @@ class Robot{
     void readUltrasonic(){
       jarak.readAllJarak();
     }
-
+    bool checkKorban(){
+      return (kamera.getX() == -1) ? false : true;
+    }
     void getKorban(){
       getKorban(DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed, this->targetSizeKorban);
       this->isHoldingKorban = true;
@@ -305,7 +312,8 @@ class Robot{
           }
           arah = (arah == KIRI) ? KANAN : KIRI;          
         }
-        rotate(arah, DEFAULT, 1, 11, this->tipeLangkah, this->speed);
+        rotate(arah, DEFAULT, 1, 11, this->tipeLangkah, this->speed, this->delayLangkah);
+        readUltrasonic();
         step++;
       }
       
@@ -313,17 +321,23 @@ class Robot{
         X = kamera.getX();
         Y = kamera.getY();
 
-        if(X >= 0 && X <= 125)
-          rotate(KANAN, height, 1, 4, tipeLangkah, speed);
-        else if (X >= 175)
-          rotate(KIRI, height, 1, 3, tipeLangkah, speed);
-        else
-          move(MAJU, height, derajat, tipeLangkah, speed);
+        if(X >= 0 && X <= 125){
+          rotate(KANAN, height, 1, 3, tipeLangkah, speed, this->delayLangkah);
+          readUltrasonic();
+          }else if (X >= 175){
+          rotate(KIRI, height, 1, 3, tipeLangkah, speed, this->delayLangkah);
+          readUltrasonic();
+        }else{
+          move(MAJU, height, derajat, tipeLangkah, speed, this->delayLangkah);
+          readUltrasonic();
+        }
 
         W = kamera.getWidth();
         H = kamera.getHeight();
-
-        if(W - H >= targetSizeKorban){
+        
+        kamera.kameraPrintLocation();
+        
+        if(W-H >= targetSizeKorban){
           if(state == 4){
             break;
           }
@@ -344,7 +358,8 @@ class Robot{
       berdiri(tipeLangkah);
       capit.naikLenganDikit();
       for(int i = 0; i < 2; i++){
-        move(MUNDUR, height, derajat, tipeLangkah, speed);
+        move(MUNDUR, height, derajat, tipeLangkah, speed, this->delayLangkah);
+        readUltrasonic();
       }
       delay(50);
       capit.naikLenganLanjutan();
@@ -354,7 +369,8 @@ class Robot{
       capit.turunLengan();
       capit.bukaCapit();
       for(int i = 0; i < 2; i++){
-          move(MUNDUR, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed);
+          move(MUNDUR, DEFAULT, this->derajatLangkah, this->tipeLangkah, this->speed, this->delayLangkah);
+          readUltrasonic();
       }
       capit.naikLengan();
       capit.tutupCapit();
@@ -383,14 +399,14 @@ class Robot{
           break;
         }
         case BACK:{
-          this->direction = BACK;
+          this->direction = RIGHT;
           break;
         }
       }
     }
 
     void kiri(){
-      rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+      rotate(KIRI, DEFAULT, 5, 11, this->tipeLangkah, this->speed, this->delayLangkah);
       changeDirToKiri();
       berdiri();
       state++;
@@ -418,14 +434,14 @@ class Robot{
     }
 
     void kanan(){
-      rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed);
+      rotate(KANAN, DEFAULT, 5, 11, this->tipeLangkah, this->speed, this->delayLangkah);
       changeDirToKanan();
       berdiri();
       state++;
     }
     
     void setPos(){
-      setPos(this->direction, DEFAULT, this->offsetDirection, this->error,this->derajatLangkahSetPos, this->tipeLangkah, this->speed);
+      setPos(this->direction, DEFAULT, this->offsetDirection, this->error,this->derajatLangkahSetPos, this->tipeLangkah, this->speed, this->delayLangkah);
     }
     /*
      * Untuk rotasi sesuai arah atau penyearah robot sesuai kompas
@@ -438,7 +454,7 @@ class Robot{
      * tipeLangkah -> NORMAL
      * Speed = 10, tidak perlu diberi value jika tidak ingin diubah
      */
-    void setPos(int index, int height, int set, int error,float derajat, int tipeLangkah, int speed = 10){
+    void setPos(int index, int height, int set, int error,float derajat, int tipeLangkah, int speed, int delayLangkah){
       
       //DEFAULT value utk error
       if(error == 0) error = 2;
@@ -473,12 +489,12 @@ class Robot{
           }
           
           if(simpanNext < yaw[index] - error + set){
-            rotate(KANAN, height, 1, derajat, tipeLangkah);
+            rotate(KANAN, height, 1, derajat, tipeLangkah, speed, delayLangkah);
             readUltrasonic();
           }
               
           if(simpanNext > yaw[index] + error + set){
-            rotate(KIRI, height, 1, derajat, tipeLangkah);
+            rotate(KIRI, height, 1, derajat, tipeLangkah, speed, delayLangkah);
             readUltrasonic();
           }    
           
@@ -494,9 +510,9 @@ class Robot{
         kaki.berdiriDebug(standPoint);
     }
     //Untuk keperluan testing StandPoint
-    void moveDebug(int action, vec3_t tinggi, float derajat, vec3_t standPoint, int speed = 10){
+    void moveDebug(int action, vec3_t tinggi, float derajat, vec3_t standPoint, int speed, int delayLangkah){
       //USE DEFAULT UNTUK HEIGHT BILA TIDAK MAU SPECIFY
-      kaki.jalanDebug(action, standPoint, derajat, tinggi, speed);
+      kaki.jalanDebug(action, standPoint, derajat, tinggi, speed, delayLangkah);
     }
     //Print kompas
     void printCurrentYPR(){

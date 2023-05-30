@@ -55,12 +55,17 @@ class Kamera{
         }
 
          void kameraPrintLocation(){
+            Serial.print("X : ");
             Serial.print(getX());
-            Serial.print(", ");
+            Serial.print(" Y : ");
             Serial.print(getY());
-            Serial.print(", ");
-            Serial.print(getWidth());
-            Serial.print(", ");
-            Serial.println(getHeight());
+            Serial.print(" W : ");
+            int width = getWidth();
+            int height = getHeight();
+            Serial.print(width);
+            Serial.print(" H : ");
+            Serial.print(height);
+            Serial.print(" W-H : ");
+            Serial.println(width - height);
         }
 };
