@@ -22,12 +22,12 @@ class Robot{
     float derajatLangkahSetPos = 10; //besar langkah kaki saat mengoreksi diri
     int height = DEFAULT; //tinggi langkah kaki, sebaiknya tidak diubah
     int direction = FRONT; //arah hadap robot, akan diupdate scr otomatis setiap mutar
-    int offsetDirection = 5; //kemiringan robot terhadap direction yg dihadap robot
+    int offsetDirection = 5; //kemiringan robot terhadap direction yg dihadap robot, pos ke kanan, min ke kiri
     int movingType = STAY; //jenis gerakan STAY-MOVING-ROTATING
     int movingDirection = STAY; //arah gerakan MAJU-MUNDUR-KIRI-KANAN
     float error = 10.0; //toleransi selisih error yaw Real robot dengan direction robot
-    int speed = 350; //kecepatan motor
-    int delayLangkah = 5; //delay antar langkah
+    int speed = 300; //kecepatan motor
+    int delayLangkah = 10; //delay antar langkah
     bool isHoldingKorban = false; //Apakah robot sedang memegang korban atau tidak
     int targetSizeKorban = 85;
     int kondisiTargetJarakMin[4] = {0,0,0,0}; //kondisi target dari ke-4 jarak, jika 0 abaikan
