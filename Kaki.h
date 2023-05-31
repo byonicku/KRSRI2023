@@ -20,7 +20,7 @@ class Kaki{
       this->letak = letak;
     }
 
-    void langkah(vec3_t pointMaju, vec3_t pointMundur){
+    void langkah(vec3_t pointMaju, vec3_t pointMundur, int speed){
       // DEFAULT DERAJAT 10
         if(this->letak == DEPAN){
           pointMaju = rotateMatrix(pointMaju, 10);
@@ -33,16 +33,16 @@ class Kaki{
 
         if(this->grup == GRUP1){
           pointMaju.x *= this->pos;
-          moveToPoint(pointMaju);
+          moveToPoint(pointMaju, speed);
         }
         else{
           pointMundur.x *= this->pos;
-          moveToPoint(pointMundur);
+          moveToPoint(pointMundur, speed);
         }
         delayMicroseconds(10);
     }
 
-    void langkahPutar(vec3_t pointMaju, vec3_t pointMundur){ 
+    void langkahPutar(vec3_t pointMaju, vec3_t pointMundur, int speed){ 
       // DEFAULT DERAJAT 15
         if(this->letak == DEPAN){
           pointMaju = rotateMatrix(pointMaju, 15 * this->pos);
@@ -54,19 +54,19 @@ class Kaki{
         } 
 
         if(this->grup == GRUP1){
-          moveToPoint(pointMaju);
+          moveToPoint(pointMaju, speed);
         }
         else{
-          moveToPoint(pointMundur);
+          moveToPoint(pointMundur, speed);
         }
         delayMicroseconds(10);
     }
 
-    void moveToPoint(vec3_t target){
+    void moveToPoint(vec3_t target, int speed = 300){
         vec3_t deggs = InversKinematik(target);
-        ax12a.moveSpeed(coxaID,mapServo(deggs.x), 300);
-        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), 300);
-        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), 300);
+        ax12a.moveSpeed(coxaID,mapServo(deggs.x), speed);
+        ax12a.moveSpeed(fermurID,mapServo(deggs.y * this->pos * -1), speed);
+        ax12a.moveSpeed(thibiaID,mapServo(deggs.z * this->pos), speed);
         // Uncomment untuk liat X, Y, Z dari servo
         // Serial.println();
         // Serial.print(deggs.x);

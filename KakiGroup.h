@@ -72,52 +72,37 @@ class KakiGroup{
       RB.berdiri(newStandPointR);
     }
     
-    void langkah(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur, int speed = 10){
+    void langkah(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur, int speed, int delayLangkah){
       do{
         vec3_t tempMaju = stepsMaju.dequeue();
         vec3_t tempMundur = stepsMundur.dequeue();
             
-        LF.langkah(tempMaju,tempMundur);
-        RF.langkah(tempMaju,tempMundur);
-        LM.langkah(tempMaju,tempMundur);
-        RM.langkah(tempMaju,tempMundur);
-        LB.langkah(tempMaju,tempMundur);
-        RB.langkah(tempMaju,tempMundur);
-        delay(speed);
+        LF.langkah(tempMaju,tempMundur, speed);
+        RF.langkah(tempMaju,tempMundur, speed);
+        LM.langkah(tempMaju,tempMundur, speed);
+        RM.langkah(tempMaju,tempMundur, speed);
+        LB.langkah(tempMaju,tempMundur, speed);
+        RB.langkah(tempMaju,tempMundur, speed);
+        delay(delayLangkah);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
     }
 
-    void langkahPutar(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur, int speed = 10){
+    void langkahPutar(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur, int speed, int delayLangkah){
       do{
         vec3_t tempMaju = stepsMaju.dequeue();
         vec3_t tempMundur = stepsMundur.dequeue();
             
-        LF.langkahPutar(tempMaju,tempMundur);
-        RF.langkahPutar(tempMaju,tempMundur);
-        LM.langkahPutar(tempMaju,tempMundur);
-        RM.langkahPutar(tempMaju,tempMundur);
-        LB.langkahPutar(tempMaju,tempMundur);
-        RB.langkahPutar(tempMaju,tempMundur);
-        delay(speed);
-      }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
-    }
-
-    void langkahSamping(ArduinoQueue<vec3_t> stepsMaju, ArduinoQueue<vec3_t> stepsMundur, int speed = 10){
-      do{
-        vec3_t tempMaju = stepsMaju.dequeue();
-        vec3_t tempMundur = stepsMundur.dequeue();
-        
-        LF.langkahPutar(tempMaju,tempMundur);
-        RF.langkahPutar(tempMaju,tempMundur);
-        LM.langkahPutar(tempMaju,tempMundur);
-        RM.langkahPutar(tempMaju,tempMundur);
-        LB.langkahPutar(tempMaju,tempMundur);
-        RB.langkahPutar(tempMaju,tempMundur);
-        delay(speed);
+        LF.langkahPutar(tempMaju,tempMundur, speed);
+        RF.langkahPutar(tempMaju,tempMundur, speed);
+        LM.langkahPutar(tempMaju,tempMundur, speed);
+        RM.langkahPutar(tempMaju,tempMundur, speed);
+        LB.langkahPutar(tempMaju,tempMundur, speed);
+        RB.langkahPutar(tempMaju,tempMundur, speed);
+        delay(delayLangkah);
       }while(!stepsMaju.isEmpty() && !stepsMundur.isEmpty());
     }
     
-    void jalan(int dir, int tipeLangkah, float derajat, int height, int speed){
+    void jalan(int dir, int tipeLangkah, float derajat, int height, int speed, int delayLangkah){
       vec3_t tinggi = this->tinggi[tipeLangkah]; // Mengatur ketinggian dari langkah
       //jika custom
       if(height > 0)
@@ -129,12 +114,12 @@ class KakiGroup{
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
       vec3_t naik = tinggi + this->standPoint[tipeLangkah];
 
-      langkah(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed);
-      langkah(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed);
+      langkah(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed, delayLangkah);
+      langkah(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed, delayLangkah);
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
 
-    void putar(int dir, int tipeLangkah, float derajat, int height, int speed){
+    void putar(int dir, int tipeLangkah, float derajat, int height, int speed, int delayLangkah){
       vec3_t tinggi = this->tinggi[tipeLangkah]; // Mengatur ketinggian dari langkah
       //jika custom
       if(height > 0)
@@ -145,28 +130,8 @@ class KakiGroup{
 
       vec3_t naik = tinggi + this->standPoint[tipeLangkah];
       
-      langkahPutar(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed);
-      langkahPutar(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed);
-    }
-
-    void samping(int dir, int tipeLangkah, float derajat, int height, int speed){
-      vec3_t tinggi = this->tinggi[tipeLangkah]; // Mengatur ketinggian dari langkah
-      //jika custom
-      if(height > 0)
-        tinggi = {0, -height, this->tinggi[tipeLangkah].z};
-
-      vec3_t sudutSampingL = {22,0,-10};
-      vec3_t sudutSampingR = {-22,0,-10};
-      vec3_t newStandPointL = this->standPoint[tipeLangkah] + sudutSampingL;
-      vec3_t newStandPointR = this->standPoint[tipeLangkah] + sudutSampingR;
-      
-      vec3_t P1 = this->standPoint[tipeLangkah];
-      vec3_t P4 = this->standPoint[tipeLangkah];
-
-      vec3_t naik = tinggi + this->standPoint[tipeLangkah];
-      
-      langkahSamping(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed);
-      langkahSamping(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed);
+      langkahPutar(trajectory(P1,naik,P4), trajectory(P4,this->standPoint[tipeLangkah],P1), speed, delayLangkah);
+      langkahPutar(trajectory(P4,this->standPoint[tipeLangkah],P1), trajectory(P1,naik,P4), speed, delayLangkah);
     }
 
     //Untuk keperluan testing StandPoint Baru
@@ -181,15 +146,15 @@ class KakiGroup{
     }
     
     //Untuk keperluan testing StandPoint Baru
-    void jalanDebug(int dir, vec3_t standPoint, float derajat, vec3_t tinggi, int speed){
+    void jalanDebug(int dir, vec3_t standPoint, float derajat, vec3_t tinggi, int speed, int delayLangkah){
       vec3_t P1 = rotateMatrix(standPoint, derajat * dir);
       vec3_t P4 = rotateMatrix(standPoint, (-derajat) * dir);
 
       // Mengatur perputaran kaki saat bergerak, dapat mempercepat langkah bila lebih besar
       vec3_t naik = tinggi + standPoint;
 
-      langkah(trajectory(P1,naik,P4), trajectory(P4,standPoint,P1), speed);
-      langkah(trajectory(P4,standPoint,P1), trajectory(P1,naik,P4), speed);
+      langkah(trajectory(P1,naik,P4), trajectory(P4,standPoint,P1), speed, delayLangkah);
+      langkah(trajectory(P4,standPoint,P1), trajectory(P1,naik,P4), speed, delayLangkah);
       // Passing fungsi langsung, bila menggunakan variabel tambahan berkemungkinan error dan tidak berjalan
     }
 };
