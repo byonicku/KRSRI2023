@@ -57,6 +57,27 @@ class KakiGroup{
       RB.berdiri(this->standPoint[tipeLangkah]);
     }
 
+    void berdiriDuduk(){
+      RB.berdiri(this->standPoint[TINGGI]);
+      LF.berdiri(this->standPoint[TINGGI]);
+      LM.berdiri(this->standPoint[SEDANG_10]);
+      RM.berdiri(this->standPoint[SEDANG_10]);
+      RF.berdiri(this->standPoint[NORMAL]);
+      LB.berdiri(this->standPoint[NORMAL]);
+    }
+
+    void berdiriEmpatKaki(){
+      // Set kaki ke poin berdiri (standpoint)
+      LF.berdiri(this->standPoint[NORMAL]);
+      RF.berdiri(this->standPoint[NORMAL]);
+      LM.berdiri(this->standPoint[NORMAL]);
+      RM.berdiri(this->standPoint[NORMAL]);
+      LB.berdiri(this->standPoint[NORMAL]);
+      RB.berdiri(this->standPoint[NORMAL]);
+      ax12a.moveSpeed(4,mapServo(-30), 300);
+      ax12a.moveSpeed(13,mapServo(30), 300);
+    }
+
     void berdiriSamping(int tipeLangkah){
       // Set kaki ke poin berdiri (standpoint)
       vec3_t sudutSampingL = {22,0,-10};

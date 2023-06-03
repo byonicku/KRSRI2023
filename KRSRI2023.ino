@@ -9,11 +9,11 @@ void setup(){
     Serial.begin(115200);
     KSR2023.init();
     delay(1000);
-    //Untuk mulai dari state tertentu
+        //Untuk mulai dari state tertentu
 //     KSR2023.initManualMode();
 //     KSR2023.state = 18;
 }
-
+   
 void loop(){
   switch(KSR2023.state){
     //init
@@ -336,14 +336,14 @@ void loop(){
   KSR2023.setPos(); //rapikan 
   KSR2023.readUltrasonic(); //update Buffer
   //keamanan
-//  keamanan();
+  keamanan();
 //  //Manual Mode di comment aja jika tidak dipakai
-//   if(Serial.available() > 0){
-//     KSR2023.state = MANUALMODE;
-//     Serial.println("Manual mode actived...");
-//     String dump = Serial.readString(); //buang inputan pertama user
-//     manualMod();
-//   }
+   if(Serial.available() > 0){
+     KSR2023.state = MANUALMODE;
+     Serial.println("Manual mode actived...");
+     String dump = Serial.readString(); //buang inputan pertama user
+     manualMod();
+   }
 }
 
 void keamanan(){

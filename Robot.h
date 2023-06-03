@@ -526,4 +526,72 @@ class Robot{
     void printKamera(){
       kamera.kameraPrintLocation();
     }
+
+    void salam(int n = 10){
+      kaki.berdiriDuduk();
+      ax12a.moveSpeed(18,mapServo(-45), 300);
+      ax12a.moveSpeed(17,mapServo(10), 300);
+      for(int i = 0; i < n; i++){
+        ax12a.moveSpeed(16,mapServo(-20), 120);
+        delay(600);
+        ax12a.moveSpeed(16,mapServo(20), 120);
+        delay(600);
+      }
+    }
+
+    void salamDuaKaki(int n = 10){
+      kaki.berdiriEmpatKaki();
+      ax12a.moveSpeed(18,mapServo(-45), 300);
+      ax12a.moveSpeed(3,mapServo(45), 300);
+      ax12a.moveSpeed(17,mapServo(10), 300);
+      ax12a.moveSpeed(2,mapServo(-10), 300);
+      for(int i = 0; i < n; i++){
+        ax12a.moveSpeed(16,mapServo(-30), 120);
+        ax12a.moveSpeed(1,mapServo(-30), 120);
+        delay(600);
+        ax12a.moveSpeed(16,mapServo(30), 120);
+        ax12a.moveSpeed(1,mapServo(30), 120);
+        delay(600);
+      }
+    }
+
+    void kucing(int n = 10){
+      kaki.berdiriDuduk();
+      ax12a.moveSpeed(16,mapServo(30), 300);
+      ax12a.moveSpeed(17,mapServo(30), 300);
+      for(int i = 0; i < n; i++){
+        ax12a.moveSpeed(18,mapServo(10), 120);
+        delay(600);
+        ax12a.moveSpeed(18,mapServo(80), 120);
+        delay(600);
+      }
+    }
+      
+    void manggilSatuKaki(int n = 10){
+      kaki.berdiriDuduk();
+      ax12a.moveSpeed(16,mapServo(30), 300);
+      ax12a.moveSpeed(17,mapServo(10), 300);
+      for(int i = 0; i < n; i++){
+        ax12a.moveSpeed(18,mapServo(-10), 120);
+        delay(600);
+        ax12a.moveSpeed(18,mapServo(-45), 120);
+        delay(600);
+      }
+    }
+
+    void manggilDuaKaki(int n = 10){
+      kaki.berdiriEmpatKaki();
+      ax12a.moveSpeed(16,mapServo(30), 300);
+      ax12a.moveSpeed(17,mapServo(10), 300);
+      ax12a.moveSpeed(1,mapServo(-30), 300);
+      ax12a.moveSpeed(2,mapServo(-10), 300);
+      for(int i = 0; i < n; i++){
+        ax12a.moveSpeed(18,mapServo(-10), 120);
+        ax12a.moveSpeed(3,mapServo(10), 120);
+        delay(600);
+        ax12a.moveSpeed(18,mapServo(-45), 120);
+        ax12a.moveSpeed(3,mapServo(45), 120);
+        delay(600);
+      }
+    }
 };
